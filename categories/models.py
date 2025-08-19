@@ -1,11 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 
-
 class Category(models.Model):
-    """
-    Category model for organizing products
-    """
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -15,7 +11,8 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
         ordering = ['name']
 
     def __str__(self):

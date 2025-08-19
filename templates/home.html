@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}E-Commerce API - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-4">E-Commerce Product API</h1>
+        <p class="lead mb-4">A powerful, scalable backend API built with Django and MySQL for managing e-commerce products, users, and categories.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/api/" class="btn btn-light btn-lg">
+                        <i class="fas fa-code me-2"></i>Explore API
+                    </a>
+                    <a href="/admin/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-cog me-2"></i>Admin Panel
+                    </a>
+                    <a href="/crud/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-database me-2"></i>CRUD Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Key Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Product Management</h5>
+                        <p class="card-text">Complete CRUD operations for products with categories, images, and stock management using MySQL.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">User Management</h5>
+                        <p class="card-text">Secure user authentication with JWT tokens and user profiles stored in MySQL database.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Search & Filtering</h5>
+                        <p class="card-text">Basic search, filtering, and pagination optimized for MySQL performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CRUD Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">🔄 Full CRUD Operations</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-plus-circle fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Create</h5>
+                        <p class="card-text">Add new products, categories, and users through intuitive forms with validation and image upload support.</p>
+                        <a href="/crud/" class="btn btn-outline-success">Try CRUD Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Read & Search</h5>
+                        <p class="card-text">View all data with advanced search, filtering, and pagination. Find exactly what you need quickly.</p>
+                        <a href="/crud/products/" class="btn btn-outline-primary">Browse Products</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-edit fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Update & Delete</h5>
+                        <p class="card-text">Edit existing records or remove them with confirmation dialogs. Bulk operations supported.</p>
+                        <a href="/crud/categories/" class="btn btn-outline-warning">Manage Categories</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Database Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Database Technology</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                        <h4>MySQL Database</h4>
+                        <p class="lead">Built with MySQL 8.0+ for robust, scalable data storage</p>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <h6>✅ Features:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>UTF8MB4 character support</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Optimized queries</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Transaction support</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional-grade reliability</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>🚀 Benefits:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Production ready</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>High performance</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Easy scaling</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Industry standard</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- API Endpoints Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">API Endpoints</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h4><i class="fas fa-key text-warning me-2"></i>Authentication</h4>
+                <div class="api-endpoint">
+                    <strong>POST /api/token/</strong> - Get JWT access token
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/token/refresh/</strong> - Refresh JWT token
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/auth/register/</strong> - User registration
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/auth/login/</strong> - User login
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4><i class="fas fa-box text-primary me-2"></i>Products</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/products/</strong> - List all products
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/products/{slug}/</strong> - Get product details
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/products/</strong> - Create product (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>PUT /api/products/{slug}/</strong> - Update product (auth required)
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h4><i class="fas fa-tags text-success me-2"></i>Categories</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/categories/</strong> - List all categories
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/categories/{slug}/</strong> - Get category details
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/categories/</strong> - Create category (auth required)
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4><i class="fas fa-users text-info me-2"></i>Users</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/users/</strong> - List users (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/users/{id}/</strong> - Get user details (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/profiles/</strong> - List user profiles (auth required)
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Technology Stack</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fab fa-python fa-3x text-primary mb-3"></i>
+                        <h6>Django 5.2.4</h6>
+                        <small class="text-muted">Web Framework</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-3x text-success mb-3"></i>
+                        <h6>MySQL 8.0+</h6>
+                        <small class="text-muted">Database</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-info mb-3"></i>
+                        <h6>DRF 3.15.2</h6>
+                        <small class="text-muted">API Framework</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h6>JWT Auth</h6>
+                        <small class="text-muted">Authentication</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Getting Started Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Getting Started</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Setup</h5>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item">Install MySQL 8.0+ server</li>
+                            <li class="list-group-item">Create database: <code>CREATE DATABASE ecommerce_db;</code></li>
+                            <li class="list-group-item">Copy <code>env_example.txt</code> to <code>.env</code></li>
+                            <li class="list-group-item">Install dependencies: <code>pip install -r requirements.txt</code></li>
+                            <li class="list-group-item">Run migrations: <code>python manage.py migrate</code></li>
+                            <li class="list-group-item">Create superuser: <code>python manage.py createsuperuser</code></li>
+                            <li class="list-group-item">Start server: <code>python manage.py runserver</code></li>
+                        </ol>
+                        <div class="text-center mt-3">
+                            <a href="https://github.com/zeyad-houssainy/alx-BE-graduation-project-ECommerce" class="btn btn-primary">
+                                <i class="fab fa-github me-2"></i>View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

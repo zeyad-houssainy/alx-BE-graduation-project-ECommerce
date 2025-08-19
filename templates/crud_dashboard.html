@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+
+{% block title %}CRUD Dashboard - E-Commerce API{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    .quick-action-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .quick-action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .recent-item {
+        border-left: 4px solid #007bff;
+        padding: 10px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+    .crud-section {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-primary">
+                <i class="fas fa-database me-3"></i>CRUD Dashboard
+            </h1>
+            <p class="lead text-muted">Manage your e-commerce data with full CRUD operations</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stats-card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-box fa-2x mb-2"></i>
+                    <h3 class="card-title">{{ total_products|default:"0" }}</h3>
+                    <p class="card-text">Total Products</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-tags fa-2x mb-2"></i>
+                    <h3 class="card-title">{{ total_categories|default:"0" }}</h3>
+                    <p class="card-text">Total Categories</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x mb-2"></i>
+                    <h3 class="card-title">{{ total_users|default:"0" }}</h3>
+                    <p class="card-text">Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <h3 class="card-title">{{ low_stock_count|default:"0" }}</h3>
+                    <p class="card-text">Low Stock Items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="crud-section">
+                <h3 class="mb-3">
+                    <i class="fas fa-bolt text-warning me-2"></i>Quick Actions
+                </h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-action-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-plus-circle fa-2x text-success mb-2"></i>
+                                <h6>Add Product</h6>
+                                <a href="{% url 'crud-products' %}?action=create" class="btn btn-outline-success btn-sm">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-action-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tag fa-2x text-primary mb-2"></i>
+                                <h6>Add Category</h6>
+                                <a href="{% url 'crud-categories' %}?action=create" class="btn btn-outline-primary btn-sm">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-action-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-plus fa-2x text-info mb-2"></i>
+                                <h6>Add User</h6>
+                                <a href="{% url 'crud-users' %}?action=create" class="btn btn-outline-info btn-sm">Create</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-action-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-search fa-2x text-warning mb-2"></i>
+                                <h6>Search Data</h6>
+                                <a href="{% url 'crud-products' %}?action=search" class="btn btn-outline-warning btn-sm">Search</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRUD Sections -->
+    <div class="row">
+        <!-- Products Section -->
+        <div class="col-md-6">
+            <div class="crud-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>
+                        <i class="fas fa-box text-primary me-2"></i>Products
+                    </h4>
+                    <a href="{% url 'crud-products' %}" class="btn btn-primary btn-sm">View All</a>
+                </div>
+                <div class="mb-3">
+                    <a href="{% url 'crud-products' %}?action=create" class="btn btn-success btn-sm me-2">
+                        <i class="fas fa-plus me-1"></i>Add Product
+                    </a>
+                    <a href="{% url 'crud-products' %}?action=search" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-search me-1"></i>Search
+                    </a>
+                </div>
+                <div class="recent-products">
+                    <h6 class="text-muted mb-2">Recent Products:</h6>
+                    {% for product in recent_products|slice:":3" %}
+                    <div class="recent-item">
+                        <strong>{{ product.name }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Price: ${{ product.price }} | Stock: {{ product.stock_quantity }}
+                        </small>
+                        <div class="mt-1">
+                            <a href="{% url 'crud-products' %}?action=edit&id={{ product.id }}" class="btn btn-outline-primary btn-xs me-1">Edit</a>
+                            <a href="{% url 'crud-products' %}?action=delete&id={{ product.id }}" class="btn btn-outline-danger btn-xs">Delete</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No products found. <a href="{% url 'crud-products' %}?action=create">Create your first product!</a></p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="col-md-6">
+            <div class="crud-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>
+                        <i class="fas fa-tags text-success me-2"></i>Categories
+                    </h4>
+                    <a href="{% url 'crud-categories' %}" class="btn btn-success btn-sm">View All</a>
+                </div>
+                <div class="mb-3">
+                    <a href="{% url 'crud-categories' %}?action=create" class="btn btn-success btn-sm me-2">
+                        <i class="fas fa-plus me-1"></i>Add Category
+                    </a>
+                    <a href="{% url 'crud-categories' %}?action=search" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-search me-1"></i>Search
+                    </a>
+                </div>
+                <div class="recent-categories">
+                    <h6 class="text-muted mb-2">Recent Categories:</h6>
+                    {% for category in recent_categories|slice:":3" %}
+                    <div class="recent-item">
+                        <strong>{{ category.name }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Products: {{ category.products.count }}
+                        </small>
+                        <div class="mt-1">
+                            <a href="{% url 'crud-categories' %}?action=edit&id={{ category.id }}" class="btn btn-outline-success btn-xs me-1">Edit</a>
+                            <a href="{% url 'crud-categories' %}?action=delete&id={{ category.id }}" class="btn btn-outline-danger btn-xs">Delete</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No categories found. <a href="{% url 'crud-categories' %}?action=create">Create your first category!</a></p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="crud-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>
+                        <i class="fas fa-users text-info me-2"></i>Users
+                    </h4>
+                    <a href="{% url 'crud-users' %}" class="btn btn-info btn-sm">View All</a>
+                </div>
+                <div class="mb-3">
+                    <a href="{% url 'crud-users' %}?action=create" class="btn btn-success btn-sm me-2">
+                        <i class="fas fa-plus me-1"></i>Add User
+                    </a>
+                    <a href="{% url 'crud-users' %}?action=search" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-search me-1"></i>Search
+                    </a>
+                </div>
+                <div class="recent-users">
+                    <h6 class="text-muted mb-2">Recent Users:</h6>
+                    <div class="row">
+                        {% for user in recent_users|slice:":4" %}
+                        <div class="col-md-3 mb-2">
+                            <div class="recent-item">
+                                <strong>{{ user.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ user.email }}</small>
+                                <div class="mt-1">
+                                    <a href="{% url 'crud-users' %}?action=edit&id={{ user.id }}" class="btn btn-outline-info btn-xs me-1">Edit</a>
+                                    <a href="{% url 'crud-users' %}?action=delete&id={{ user.id }}" class="btn btn-outline-danger btn-xs">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <p class="text-muted">No users found. <a href="{% url 'crud-users' %}?action=create">Create your first user!</a></p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Integration Info -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="crud-section bg-light">
+                <h4>
+                    <i class="fas fa-code text-secondary me-2"></i>API Integration
+                </h4>
+                <p class="text-muted mb-3">
+                    All CRUD operations are powered by your Django REST Framework API. 
+                    You can also use the API directly for programmatic access.
+                </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>API Endpoints:</h6>
+                        <ul class="list-unstyled">
+                            <li><code>GET /api/products/</code> - List products</li>
+                            <li><code>POST /api/products/</code> - Create product</li>
+                            <li><code>PUT /api/products/{id}/</code> - Update product</li>
+                            <li><code>DELETE /api/products/{id}/</code> - Delete product</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Authentication:</h6>
+                        <ul class="list-unstyled">
+                            <li><code>POST /api/auth/login/</code> - Get JWT token</li>
+                            <li><code>POST /api/auth/register/</code> - User registration</li>
+                            <li><code>Authorization: Bearer &lt;token&gt;</code></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="/api/" class="btn btn-outline-secondary">
+                        <i class="fas fa-external-link-alt me-2"></i>Explore Full API
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh dashboard data every 30 seconds
+    setInterval(function() {
+        location.reload();
+    }, 30000);
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

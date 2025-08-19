@@ -1,0 +1,22 @@
+# Django Settings
+SECRET_KEY=django-insecure-s8md8r=z3^2w8aud0buw4bvpe1uy%l#n=p30it8ozh7981cp47
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# MySQL Database Configuration
+DB_NAME=ecommerce_db
+DB_USER=root
+DB_PASSWORD=Houssainy1995!
+DB_HOST=localhost
+DB_PORT=3306
+
+# JWT Settings
+JWT_SECRET_KEY=your-jwt-secret-key-here
+JWT_ACCESS_TOKEN_LIFETIME=1
+JWT_REFRESH_TOKEN_LIFERY=7
+
+# CORS Settings
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080
+
+
+
