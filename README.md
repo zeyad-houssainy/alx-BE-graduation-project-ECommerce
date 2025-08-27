@@ -165,4 +165,3 @@ This project provides everything you need for a production-ready e-commerce API:
 
 ---
 
-**Built with ❤️ using Django REST Framework**

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +29,26 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-s8md8r=z3^2w8aud0buw4
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+
+# Railway-specific settings
+RAILWAY_ENVIRONMENT = config('RAILWAY_ENVIRONMENT', default=False, cast=bool)
+
+if RAILWAY_ENVIRONMENT:
+    # Production settings for Railway
+    DEBUG = False
+    ALLOWED_HOSTS = ['*']  # Allow all hosts on Railway
+    CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+    
+    # Security settings for production
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Static files for Railway
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Application definition
@@ -90,11 +112,11 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME', default='storefront2'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'USER': config('DB_USER', default='root'),
-        'PASSWORD': config('DB_PASSWORD', default='Houssainy1995!'),
-        'PORT': config('DB_PORT', default=3306, cast=int),
+        'NAME': config('MYSQLDATABASE', default=config('DB_NAME', default='railway')),
+        'HOST': config('MYSQLHOST', default=config('DB_HOST', default='localhost')),
+        'USER': config('MYSQLUSERNAME', default=config('DB_USER', default='root')),
+        'PASSWORD': config('MYSQLPASSWORD', default=config('DB_PASSWORD', default='')),
+        'PORT': config('MYSQLPORT', default=config('DB_PORT', default=3306, cast=int), cast=int),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },
