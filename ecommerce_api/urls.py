@@ -32,6 +32,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin_site.urls),
     
+    # Healthcheck endpoint for Railway
+    path('health/', views.healthcheck, name='healthcheck'),
+    
     # Authentication URLs
     path('login/', views.user_login, name='user-login'),
     path('logout/', views.user_logout, name='user-logout'),

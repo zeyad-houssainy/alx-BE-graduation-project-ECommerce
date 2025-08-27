@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.db import transaction
 from accounts.serializers import UserCreateSerializer
+from django.utils import timezone
 
 
 def home(request):
@@ -122,3 +123,12 @@ def profile(request):
 def documentation(request):
     """API documentation view"""
     return render(request, 'documentation.html')
+
+
+def healthcheck(request):
+    """Healthcheck endpoint for Railway deployment"""
+    return JsonResponse({
+        'status': 'healthy',
+        'message': 'Django E-commerce API is running',
+        'timestamp': timezone.now().isoformat()
+    })
