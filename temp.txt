@@ -1,0 +1,43 @@
+DB_PASSWORD=Houssainy1995!
+# Local Development Environment Configuration for MySQL
+# Copy this file to .env and fill in your actual values
+
+# Django Settings
+SECRET_KEY=django-insecure-local-development-key-change-in-production
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+RAILWAY_ENVIRONMENT=False
+
+# MySQL Database Configuration
+DB_NAME=ecommerce_db
+DB_HOST=localhost
+DB_USER=root
+DB_PORT=3306
+
+# Alternative MySQL Variables (if needed)
+MYSQLDATABASE=ecommerce_db
+MYSQLHOST=localhost
+MYSQLUSERNAME=root
+MYSQLPASSWORD=Houssainy1995!
+MYSQLPORT=3306
+
+# Security Settings (False for local development)
+CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+SECURE_SSL_REDIRECT=False
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
+
+# JWT Settings
+JWT_SECRET_KEY=local-jwt-secret-key-change-in-production
+JWT_ACCESS_TOKEN_LIFETIME=1
+JWT_REFRESH_TOKEN_LIFETIME=7
+
+# CORS Settings for Local Development
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080
+
+# Static and Media Files
+STATIC_ROOT=staticfiles
+MEDIA_ROOT=media
+
+# Logging
+LOG_LEVEL=DEBUG

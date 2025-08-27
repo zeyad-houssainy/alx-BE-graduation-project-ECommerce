@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 import pymysql
+import os
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,12 +39,12 @@ if RAILWAY_ENVIRONMENT:
     # Production settings for Railway
     DEBUG = False
     ALLOWED_HOSTS = ['*']  # Allow all hosts on Railway
-    CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
     
     # Security settings for production
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
+    CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
@@ -109,16 +111,18 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# MySQL Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQLDATABASE', default=config('DB_NAME', default='railway')),
-        'HOST': config('MYSQLHOST', default=config('DB_HOST', default='localhost')),
-        'USER': config('MYSQLUSERNAME', default=config('DB_USER', default='root')),
-        'PASSWORD': config('MYSQLPASSWORD', default=config('DB_PASSWORD', default='')),
-        'PORT': config('MYSQLPORT', default=config('DB_PORT', default=3306, cast=int), cast=int),
+        'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
+        'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
+        'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
+        'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='Houssainy1995!')),
+        'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
         'OPTIONS': {
             'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
@@ -158,7 +162,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
@@ -178,12 +182,12 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Session Configuration
 SESSION_COOKIE_AGE = 3600  # 1 hour
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # CSRF Configuration
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
@@ -232,14 +236,37 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-]
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', 
+    default="http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080",
+    cast=lambda v: [s.strip() for s in v.split(',')])
 
 CORS_ALLOW_CREDENTIALS = True
 
-# WhiteNoise Configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise Configuration for static files
+if RAILWAY_ENVIRONMENT:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Logging Configuration for Railway
+if RAILWAY_ENVIRONMENT:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': config('LOG_LEVEL', default='INFO'),
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': config('LOG_LEVEL', default='INFO'),
+                'propagate': False,
+            },
+        },
+    }
