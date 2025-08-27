@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q, Count
 from .models import Category
@@ -13,17 +13,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ViewSet for Category model providing full CRUD operations.
     
     Available actions:
-    - GET /api/categories/ - List all categories
-    - POST /api/categories/ - Create a new category
-    - GET /api/categories/{slug}/ - Retrieve a specific category
-    - PUT /api/categories/{slug}/ - Update a category (full update)
-    - PATCH /api/categories/{slug}/ - Update a category (partial update)
-    - DELETE /api/categories/{slug}/ - Delete a category
-    - GET /api/categories/{slug}/products/ - Get products in a category
-    - GET /api/categories/featured/ - Get featured categories
-    - GET /api/categories/popular/ - Get popular categories
-    - POST /api/categories/bulk-update/ - Bulk update categories
-    - DELETE /api/categories/bulk-delete/ - Bulk delete categories
+    - GET /api/categories/ - List all categories (public)
+    - POST /api/categories/ - Create a new category (authenticated)
+    - GET /api/categories/{slug}/ - Retrieve a specific category (public)
+    - PUT /api/categories/{slug}/ - Update a category (authenticated)
+    - PATCH /api/categories/{slug}/ - Update a category (authenticated)
+    - DELETE /api/categories/{slug}/ - Delete a category (authenticated)
+    - GET /api/categories/{slug}/products/ - Get products in a category (public)
+    - GET /api/categories/popular/ - Get popular categories (public)
+
     """
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
@@ -34,6 +32,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['name']
     lookup_field = 'slug'
+
+    def get_permissions(self):
+        """Set permissions based on action"""
+        if self.action in []:
+            return [IsAdminUser()]
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -83,13 +87,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
             )
 
     @action(detail=False, methods=['get'])
-    def featured(self, request):
-        """Get featured categories"""
-        featured_categories = self.get_queryset().filter(is_active=True)[:6]
-        serializer = self.get_serializer(featured_categories, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'])
     def popular(self, request):
         """Get popular categories based on product count"""
         popular_categories = self.get_queryset().annotate(
@@ -125,93 +122,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
-    def bulk_update(self, request):
-        """Bulk update categories"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        category_ids = request.data.get('category_ids', [])
-        update_data = request.data.get('update_data', {})
-        
-        if not category_ids:
-            return Response(
-                {'error': 'category_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        if not update_data:
-            return Response(
-                {'error': 'update_data field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Remove fields that shouldn't be updated
-        update_data.pop('id', None)
-        update_data.pop('slug', None)
-        update_data.pop('created_at', None)
-        update_data.pop('updated_at', None)
-        
-        updated_count = 0
-        allowed_fields = ['name', 'description', 'is_active']
-        
-        for category_id in category_ids:
-            try:
-                category = Category.objects.get(id=category_id)
-                for field, value in update_data.items():
-                    if field in allowed_fields and hasattr(category, field):
-                        # Validate field type before setting
-                        field_obj = category._meta.get_field(field)
-                        if hasattr(field_obj, 'validate'):
-                            field_obj.validate(value, category)
-                        setattr(category, field, value)
-                category.save()
-                updated_count += 1
-            except Category.DoesNotExist:
-                continue
-            except Exception as e:
-                # Log validation errors but continue with other categories
-                continue
-        
-        return Response({
-            'message': f'Successfully updated {updated_count} categories',
-            'updated_count': updated_count
-        })
 
-    @action(detail=False, methods=['delete'])
-    def bulk_delete(self, request):
-        """Bulk delete categories (soft delete)"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        category_ids = request.data.get('category_ids', [])
-        
-        if not category_ids:
-            return Response(
-                {'error': 'category_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        deleted_count = 0
-        for category_id in category_ids:
-            try:
-                category = Category.objects.get(id=category_id)
-                category.is_active = False
-                category.save()
-                deleted_count += 1
-            except Category.DoesNotExist:
-                continue
-        
-        return Response({
-            'message': f'Successfully deleted {deleted_count} categories',
-            'deleted_count': deleted_count
-        })
+
+
 
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, slug=None):

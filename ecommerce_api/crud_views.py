@@ -1,20 +1,36 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views import View
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.urls import reverse
 from products.models import Product
 from categories.models import Category
 from accounts.models import UserProfile
 import json
 
 
+def is_staff_or_superuser(user):
+    """Check if user is staff or superuser"""
+    return user.is_staff or user.is_superuser
+
+
+def login_required_custom(function):
+    """Custom login required decorator that redirects to login with next parameter"""
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, 'Please log in to access this page.')
+            return redirect(f"{reverse('user-login')}?next={request.path}")
+        return function(request, *args, **kwargs)
+    return wrapper
+
+
+@login_required_custom
 def crud_dashboard(request):
     """Main CRUD dashboard view"""
     context = {
@@ -29,6 +45,7 @@ def crud_dashboard(request):
     return render(request, 'crud_dashboard.html', context)
 
 
+@login_required_custom
 def crud_products(request):
     """Products CRUD view"""
     action = request.GET.get('action', '')
@@ -44,6 +61,7 @@ def crud_products(request):
         return render_products_list(request)
 
 
+@login_required_custom
 def render_products_create_form(request):
     """Render product creation form"""
     if request.method == 'POST':
@@ -57,6 +75,7 @@ def render_products_create_form(request):
     return render(request, 'crud_products.html', context)
 
 
+@login_required_custom
 def render_products_edit_form(request, product_id):
     """Render product edit form"""
     product = get_object_or_404(Product, id=product_id)
@@ -72,6 +91,7 @@ def render_products_edit_form(request, product_id):
     return render(request, 'crud_products.html', context)
 
 
+@login_required_custom
 def render_products_list(request):
     """Render products list with search and filtering"""
     # Get search and filter parameters
@@ -118,6 +138,7 @@ def render_products_list(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
 def create_product(request):
     """Create a new product"""
     try:
@@ -162,6 +183,7 @@ def create_product(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
 def update_product(request, product):
     """Update an existing product"""
     try:
@@ -192,6 +214,7 @@ def update_product(request, product):
         return redirect('crud-products')
 
 
+@login_required_custom
 def delete_product(request, product_id):
     """Delete a product (soft delete)"""
     try:
@@ -205,6 +228,7 @@ def delete_product(request, product_id):
     return redirect('crud-products')
 
 
+@login_required_custom
 def crud_categories(request):
     """Categories CRUD view"""
     action = request.GET.get('action', '')
@@ -220,6 +244,7 @@ def crud_categories(request):
         return render_categories_list(request)
 
 
+@login_required_custom
 def render_categories_create_form(request):
     """Render category creation form"""
     if request.method == 'POST':
@@ -232,6 +257,7 @@ def render_categories_create_form(request):
     return render(request, 'crud_categories.html', context)
 
 
+@login_required_custom
 def render_categories_edit_form(request, category_id):
     """Render category edit form"""
     category = get_object_or_404(Category, id=category_id)
@@ -246,6 +272,7 @@ def render_categories_edit_form(request, category_id):
     return render(request, 'crud_categories.html', context)
 
 
+@login_required_custom
 def render_categories_list(request):
     """Render categories list with search and filtering"""
     # Get search and filter parameters
@@ -283,17 +310,23 @@ def render_categories_list(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
 def create_category(request):
     """Create a new category"""
     try:
         # Get form data
         name = request.POST.get('name')
-        description = request.POST.get('description')
+        description = request.POST.get('description', '')
         is_active = request.POST.get('is_active') == 'True'
         
         # Validate required fields
         if not name:
             messages.error(request, 'Category name is required.')
+            return redirect('crud-categories')
+        
+        # Check if category name already exists
+        if Category.objects.filter(name=name).exists():
+            messages.error(request, 'Category with this name already exists.')
             return redirect('crud-categories')
         
         # Create category
@@ -302,11 +335,6 @@ def create_category(request):
             description=description,
             is_active=is_active
         )
-        
-        # Handle image upload
-        if 'image' in request.FILES:
-            category.image = request.FILES['image']
-            category.save()
         
         messages.success(request, f'Category "{category.name}" created successfully!')
         return redirect('crud-categories')
@@ -317,17 +345,24 @@ def create_category(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
 def update_category(request, category):
     """Update an existing category"""
     try:
         # Get form data
         category.name = request.POST.get('name')
-        category.description = request.POST.get('description')
+        category.description = request.POST.get('description', '')
         category.is_active = request.POST.get('is_active') == 'True'
         
-        # Handle image upload
-        if 'image' in request.FILES:
-            category.image = request.FILES['image']
+        # Validate required fields
+        if not category.name:
+            messages.error(request, 'Category name is required.')
+            return redirect('crud-categories')
+        
+        # Check if category name already exists (excluding current category)
+        if Category.objects.exclude(id=category.id).filter(name=category.name).exists():
+            messages.error(request, 'Category with this name already exists.')
+            return redirect('crud-categories')
         
         category.save()
         
@@ -339,6 +374,7 @@ def update_category(request, category):
         return redirect('crud-categories')
 
 
+@login_required_custom
 def delete_category(request, category_id):
     """Delete a category (soft delete)"""
     try:
@@ -352,8 +388,10 @@ def delete_category(request, category_id):
     return redirect('crud-categories')
 
 
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def crud_users(request):
-    """Users CRUD view"""
+    """Users CRUD view - Staff only"""
     action = request.GET.get('action', '')
     user_id = request.GET.get('id')
     
@@ -367,20 +405,23 @@ def crud_users(request):
         return render_users_list(request)
 
 
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def render_users_create_form(request):
-    """Render user creation form"""
+    """Render user creation form - Staff only"""
     if request.method == 'POST':
         return create_user(request)
     
     context = {
-        'action': 'create',
-        'user': None
+        'action': 'create'
     }
     return render(request, 'crud_users.html', context)
 
 
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def render_users_edit_form(request, user_id):
-    """Render user edit form"""
+    """Render user edit form - Staff only"""
     user = get_object_or_404(User, id=user_id)
     
     if request.method == 'POST':
@@ -393,8 +434,10 @@ def render_users_edit_form(request, user_id):
     return render(request, 'crud_users.html', context)
 
 
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def render_users_list(request):
-    """Render users list with search and filtering"""
+    """Render users list with search and filtering - Staff only"""
     # Get search and filter parameters
     search_query = request.GET.get('search', '')
     status_filter = request.GET.get('status', '')
@@ -445,8 +488,10 @@ def render_users_list(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def create_user(request):
-    """Create a new user"""
+    """Create a new user - Staff only"""
     try:
         # Get form data
         username = request.POST.get('username')
@@ -511,8 +556,10 @@ def create_user(request):
 
 
 @require_http_methods(["POST"])
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def update_user(request, user):
-    """Update an existing user"""
+    """Update an existing user - Staff only"""
     try:
         # Get form data
         user.email = request.POST.get('email')
@@ -543,8 +590,10 @@ def update_user(request, user):
         return redirect('crud-users')
 
 
+@login_required_custom
+@user_passes_test(is_staff_or_superuser)
 def delete_user(request, user_id):
-    """Delete a user (hard delete)"""
+    """Delete a user (hard delete) - Staff only"""
     try:
         user = get_object_or_404(User, id=user_id)
         username = user.username
@@ -556,53 +605,4 @@ def delete_user(request, user_id):
     return redirect('crud-users')
 
 
-# AJAX endpoints for bulk operations
-@csrf_exempt
-def bulk_update_products(request):
-    """Bulk update products via AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            product_ids = data.get('product_ids', [])
-            update_data = data.get('update_data', {})
-            
-            # Update products
-            updated_count = Product.objects.filter(id__in=product_ids).update(**update_data)
-            
-            return JsonResponse({
-                'success': True,
-                'message': f'Successfully updated {updated_count} products',
-                'updated_count': updated_count
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': str(e)
-            }, status=400)
-    
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
-@csrf_exempt
-def bulk_delete_products(request):
-    """Bulk delete products via AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            product_ids = data.get('product_ids', [])
-            
-            # Soft delete products
-            deleted_count = Product.objects.filter(id__in=product_ids).update(is_active=False)
-            
-            return JsonResponse({
-                'success': True,
-                'message': f'Successfully deleted {deleted_count} products',
-                'deleted_count': deleted_count
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': str(e)
-            }, status=400)
-    
-    return JsonResponse({'error': 'Method not allowed'}, status=405)

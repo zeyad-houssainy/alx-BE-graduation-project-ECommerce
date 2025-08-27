@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -17,17 +17,15 @@ class ProductViewSet(viewsets.ModelViewSet):
     ViewSet for Product model providing full CRUD operations.
     
     Available actions:
-    - GET /api/products/ - List all products
-    - POST /api/products/ - Create a new product
-    - GET /api/products/{slug}/ - Retrieve a specific product
-    - PUT /api/products/{slug}/ - Update a product (full update)
-    - PATCH /api/products/{slug}/ - Update a product (partial update)
-    - DELETE /api/products/{slug}/ - Delete a product
-    - GET /api/products/search/ - Search products
-    - GET /api/products/featured/ - Get featured products
-    - GET /api/products/out-of-stock/ - Get out of stock products
-    - POST /api/products/bulk-update/ - Bulk update products
-    - DELETE /api/products/bulk-delete/ - Bulk delete products
+    - GET /api/products/ - List all products (public)
+    - POST /api/products/ - Create a new product (authenticated)
+    - GET /api/products/{slug}/ - Retrieve a specific product (public)
+    - PUT /api/products/{slug}/ - Update a product (authenticated)
+    - PATCH /api/products/{slug}/ - Update a product (authenticated)
+    - DELETE /api/products/{slug}/ - Delete a product (authenticated)
+    - GET /api/products/search/ - Search products (public)
+    - GET /api/products/out-of-stock/ - Get out of stock products (public)
+
     """
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
@@ -38,6 +36,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name', 'price', 'created_at', 'updated_at', 'stock_quantity']
     ordering = ['-created_at']
     lookup_field = 'slug'
+
+    def get_permissions(self):
+        """Set permissions based on action"""
+        if self.action in []:
+            return [IsAdminUser()]
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -90,13 +94,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
-    def featured(self, request):
-        """Get featured products (first 6 active products)"""
-        featured_products = self.get_queryset()[:6]
-        serializer = self.get_serializer(featured_products, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'])
     def out_of_stock(self, request):
         """Get products that are out of stock"""
         out_of_stock_products = self.get_queryset().filter(stock_quantity=0)
@@ -144,94 +141,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(product)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
-    def bulk_update(self, request):
-        """Bulk update products"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        product_ids = request.data.get('product_ids', [])
-        update_data = request.data.get('update_data', {})
-        
-        if not product_ids:
-            return Response(
-                {'error': 'product_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        if not update_data:
-            return Response(
-                {'error': 'update_data field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Remove fields that shouldn't be updated
-        update_data.pop('id', None)
-        update_data.pop('slug', None)
-        update_data.pop('created_by', None)
-        update_data.pop('created_at', None)
-        update_data.pop('updated_at', None)
-        
-        updated_count = 0
-        allowed_fields = ['name', 'description', 'price', 'category', 'stock_quantity', 'is_active']
-        
-        for product_id in product_ids:
-            try:
-                product = Product.objects.get(id=product_id)
-                for field, value in update_data.items():
-                    if field in allowed_fields and hasattr(product, field):
-                        # Validate field type before setting
-                        field_obj = product._meta.get_field(field)
-                        if hasattr(field_obj, 'validate'):
-                            field_obj.validate(value, product)
-                        setattr(product, field, value)
-                product.save()
-                updated_count += 1
-            except Product.DoesNotExist:
-                continue
-            except Exception as e:
-                # Log validation errors but continue with other products
-                continue
-        
-        return Response({
-            'message': f'Successfully updated {updated_count} products',
-            'updated_count': updated_count
-        })
 
-    @action(detail=False, methods=['delete'])
-    def bulk_delete(self, request):
-        """Bulk delete products (soft delete)"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        product_ids = request.data.get('product_ids', [])
-        
-        if not product_ids:
-            return Response(
-                {'error': 'product_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        deleted_count = 0
-        for product_id in product_ids:
-            try:
-                product = Product.objects.get(id=product_id)
-                product.is_active = False
-                product.save()
-                deleted_count += 1
-            except Product.DoesNotExist:
-                continue
-        
-        return Response({
-            'message': f'Successfully deleted {deleted_count} products',
-            'deleted_count': deleted_count
-        })
+
+
 
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, slug=None):

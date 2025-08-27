@@ -3,103 +3,157 @@
 {% block title %}E-Commerce API - Home{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-4">E-Commerce Product API</h1>
-        <p class="lead mb-4">A powerful, scalable backend API built with Django and MySQL for managing e-commerce products, users, and categories.</p>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="d-flex gap-3 justify-content-center">
-                    <a href="/api/" class="btn btn-light btn-lg">
-                        <i class="fas fa-code me-2"></i>Explore API
-                    </a>
-                    <a href="/admin/" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-cog me-2"></i>Admin Panel
-                    </a>
-                    <a href="/crud/" class="btn btn-outline-light btn-lg">
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">E-Commerce API</h1>
+            <p class="lead mb-5">A powerful and scalable e-commerce API built with Django REST Framework</p>
+            
+            {% if user.is_authenticated %}
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'crud-dashboard' %}" class="btn btn-light btn-lg w-100">
                         <i class="fas fa-database me-2"></i>CRUD Dashboard
                     </a>
                 </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-profile' %}" class="btn btn-outline-light btn-lg w-100">
+                        <i class="fas fa-user me-2"></i>My Profile
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-login' %}" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-register' %}" class="btn btn-outline-light btn-lg w-100">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold">Features</h2>
+                <p class="lead text-muted">Everything you need to build a modern e-commerce platform</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Full CRUD Operations</h5>
+                        <p class="card-text">Complete Create, Read, Update, and Delete functionality for all entities with an intuitive web interface.</p>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'crud-dashboard' %}" class="btn btn-primary">Access Dashboard</a>
+                        {% else %}
+                        <a href="{% url 'user-login' %}" class="btn btn-primary">Login to Access</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                                                 <i class="fas fa-code fa-3x text-success mb-3"></i>
+                         <h5 class="card-title">RESTful API</h5>
+                         <p class="card-text">Modern REST API with JWT authentication, comprehensive endpoints, and detailed documentation.</p>
+                         <div class="d-flex gap-2 justify-content-center">
+                             <a href="/api/" class="btn btn-success">Explore API</a>
+                             <a href="{% url 'documentation' %}" class="btn btn-outline-success">View Docs</a>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Secure & Scalable</h5>
+                        <p class="card-text">Built with security best practices, role-based access control, and MySQL database for scalability.</p>
+                        {% if user.is_staff or user.is_superuser %}
+                        <a href="/admin/" class="btn btn-warning">Admin Panel</a>
+                        {% else %}
+                        <span class="text-muted">Admin access required</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- Features Section -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Key Features</h2>
+    <!-- Quick Actions Section -->
+    {% if user.is_authenticated %}
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold">Quick Actions</h2>
+                <p class="lead text-muted">Manage your e-commerce data efficiently</p>
+            </div>
+        </div>
+        
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card feature-card h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-box fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">Product Management</h5>
-                        <p class="card-text">Complete CRUD operations for products with categories, images, and stock management using MySQL.</p>
+                        <h5 class="card-title">Products</h5>
+                        <p class="card-text">Manage product catalog, inventory, and pricing.</p>
+                        <a href="{% url 'crud-products' %}" class="btn btn-outline-primary">Manage Products</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            
+            <div class="col-md-3">
                 <div class="card feature-card h-100">
                     <div class="card-body text-center">
-                        <i class="fas fa-users fa-3x text-success mb-3"></i>
-                        <h5 class="card-title">User Management</h5>
-                        <p class="card-text">Secure user authentication with JWT tokens and user profiles stored in MySQL database.</p>
+                        <i class="fas fa-tags fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Categories</h5>
+                        <p class="card-text">Organize products with category management.</p>
+                        <a href="{% url 'crud-categories' %}" class="btn btn-outline-success">Manage Categories</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            
+            {% if user.is_staff or user.is_superuser %}
+            <div class="col-md-3">
                 <div class="card feature-card h-100">
                     <div class="card-body text-center">
-                        <i class="fas fa-search fa-3x text-info mb-3"></i>
-                        <h5 class="card-title">Search & Filtering</h5>
-                        <p class="card-text">Basic search, filtering, and pagination optimized for MySQL performance.</p>
+                        <i class="fas fa-users fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Users</h5>
+                        <p class="card-text">Manage user accounts and permissions.</p>
+                        <a href="{% url 'crud-users' %}" class="btn btn-outline-info">Manage Users</a>
                     </div>
                 </div>
             </div>
+            
+            <div class="col-md-3">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cog fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Admin</h5>
+                        <p class="card-text">Advanced administration and system settings.</p>
+                        <a href="/admin/" class="btn btn-outline-warning">Admin Panel</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
-</section>
-
-<!-- CRUD Features Section -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">🔄 Full CRUD Operations</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card feature-card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-plus-circle fa-3x text-success mb-3"></i>
-                        <h5 class="card-title">Create</h5>
-                        <p class="card-text">Add new products, categories, and users through intuitive forms with validation and image upload support.</p>
-                        <a href="/crud/" class="btn btn-outline-success">Try CRUD Dashboard</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-eye fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">Read & Search</h5>
-                        <p class="card-text">View all data with advanced search, filtering, and pagination. Find exactly what you need quickly.</p>
-                        <a href="/crud/products/" class="btn btn-outline-primary">Browse Products</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-edit fa-3x text-warning mb-3"></i>
-                        <h5 class="card-title">Update & Delete</h5>
-                        <p class="card-text">Edit existing records or remove them with confirmation dialogs. Bulk operations supported.</p>
-                        <a href="/crud/categories/" class="btn btn-outline-warning">Manage Categories</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    {% endif %}
 
 <!-- Database Section -->
 <section class="py-5 bg-light">

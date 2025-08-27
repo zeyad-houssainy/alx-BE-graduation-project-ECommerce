@@ -15,7 +15,7 @@ class MainURLsTest(TestCase):
         url = reverse('home')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'E-Commerce Product API')
+        self.assertContains(response, 'E-Commerce API')
 
     def test_admin_page(self):
         """Test that admin page is accessible"""
@@ -87,7 +87,7 @@ class AuthenticationEndpointsTest(APITestCase):
 
     def test_user_registration_endpoint(self):
         """Test user registration endpoint"""
-        url = reverse('user-register')
+        url = reverse('api-user-register')
         data = {
             'username': 'newuser',
             'email': 'newuser@example.com',
@@ -111,7 +111,7 @@ class AuthenticationEndpointsTest(APITestCase):
             password='loginpass123'
         )
         
-        url = reverse('user-login')
+        url = reverse('api-user-login')
         data = {
             'username': 'loginuser',
             'password': 'loginpass123'
@@ -209,7 +209,7 @@ class IntegrationTest(APITestCase):
             'last_name': 'User'
         }
         register_response = self.client.post(
-            reverse('user-register'), 
+            reverse('api-user-register'), 
             register_data, 
             format='json'
         )
@@ -221,7 +221,7 @@ class IntegrationTest(APITestCase):
             'password': 'workflow123'
         }
         login_response = self.client.post(
-            reverse('user-login'), 
+            reverse('api-user-login'), 
             login_data, 
             format='json'
         )

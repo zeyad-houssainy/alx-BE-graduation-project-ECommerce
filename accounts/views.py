@@ -83,8 +83,7 @@ class UserViewSet(viewsets.ModelViewSet):
     - GET /api/users/profile/ - Get current user's profile
     - PUT /api/users/update_profile/ - Update current user's profile
     - GET /api/users/search/ - Search users
-    - POST /api/users/bulk-update/ - Bulk update users (admin only)
-    - DELETE /api/users/bulk-delete/ - Bulk delete users (admin only)
+
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -97,7 +96,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'register', 'login']:
             return [AllowAny()]
-        elif self.action in ['list', 'bulk_update', 'bulk_delete']:
+        elif self.action in ['list']:
             return [IsAdminUser()]
         return super().get_permissions()
 
@@ -162,100 +161,9 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
-    def bulk_update(self, request):
-        """Bulk update users (admin only)"""
-        if not request.user.is_staff:
-            return Response(
-                {'error': 'Permission denied'}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        user_ids = request.data.get('user_ids', [])
-        update_data = request.data.get('update_data', {})
-        
-        if not user_ids:
-            return Response(
-                {'error': 'user_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        if not update_data:
-            return Response(
-                {'error': 'update_data field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Remove fields that shouldn't be updated
-        update_data.pop('id', None)
-        update_data.pop('password', None)
-        update_data.pop('last_login', None)
-        update_data.pop('date_joined', None)
-        
-        updated_count = 0
-        allowed_fields = ['username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff']
-        
-        for user_id in user_ids:
-            try:
-                user = User.objects.get(id=user_id)
-                for field, value in update_data.items():
-                    if field in allowed_fields and hasattr(user, field):
-                        # Validate field type before setting
-                        field_obj = user._meta.get_field(field)
-                        if hasattr(field_obj, 'validate'):
-                            field_obj.validate(value, user)
-                        setattr(user, field, value)
-                user.save()
-                updated_count += 1
-            except User.DoesNotExist:
-                continue
-            except Exception as e:
-                # Log validation errors but continue with other users
-                continue
-        
-        return Response({
-            'message': f'Successfully updated {updated_count} users',
-            'updated_count': updated_count
-        })
 
-    @action(detail=False, methods=['delete'])
-    def bulk_delete(self, request):
-        """Bulk delete users (admin only)"""
-        if not request.user.is_staff:
-            return Response(
-                {'error': 'Permission denied'}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        user_ids = request.data.get('user_ids', [])
-        
-        if not user_ids:
-            return Response(
-                {'error': 'user_ids field is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Prevent admin from deleting themselves
-        if request.user.id in user_ids:
-            return Response(
-                {'error': 'Cannot delete your own account'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        deleted_count = 0
-        for user_id in user_ids:
-            try:
-                user = User.objects.get(id=user_id)
-                if not user.is_superuser:  # Prevent deleting superusers
-                    user.delete()
-                    deleted_count += 1
-            except User.DoesNotExist:
-                continue
-        
-        return Response({
-            'message': f'Successfully deleted {deleted_count} users',
-            'deleted_count': deleted_count
-        })
+
+
 
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
@@ -306,7 +214,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
     
     def get_permissions(self):
-        if self.action in ['list', 'bulk_update', 'bulk_delete']:
+        if self.action in ['list']:
             return [IsAdminUser()]
         return super().get_permissions()
     

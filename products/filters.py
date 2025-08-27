@@ -12,7 +12,7 @@ class ProductFilter(django_filters.FilterSet):
     min_stock = django_filters.NumberFilter(field_name='stock_quantity', lookup_expr='gte')
     max_stock = django_filters.NumberFilter(field_name='stock_quantity', lookup_expr='lte')
     in_stock = django_filters.BooleanFilter(method='filter_in_stock')
-    featured = django_filters.BooleanFilter()
+
     created_after = django_filters.DateTimeFilter(field_name='created_at', lookup_expr='gte')
     created_before = django_filters.DateTimeFilter(field_name='created_at', lookup_expr='lte')
 

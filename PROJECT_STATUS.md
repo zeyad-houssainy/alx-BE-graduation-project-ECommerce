@@ -89,9 +89,8 @@
 
 ### 1. Advanced Features (Future Development)
 - [ ] Product reviews and ratings system
-- [ ] Wishlist functionality
 - [ ] Advanced filtering and search
-- [ ] Featured products
+
 - [ ] Stock management alerts
 - [ ] Order management system
 - [ ] Shopping cart functionality
@@ -163,7 +162,6 @@ The project meets the core requirements from the project specification and provi
 
 ### Phase 2 (Next - Enhanced Features)
 - [ ] Product reviews and ratings
-- [ ] Wishlist functionality
 - [ ] Advanced filtering
 - [ ] Stock management
 
