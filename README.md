@@ -24,7 +24,7 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 - **Database**: MySQL (with PostgreSQL support for Railway)
 - **Static Files**: WhiteNoise
 - **Server**: Gunicorn
-- **Deployment**: Railway-ready
+
 
 ## Mock Data Feature
 
