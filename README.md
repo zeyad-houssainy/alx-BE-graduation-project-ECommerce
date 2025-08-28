@@ -50,6 +50,40 @@ The project includes a powerful mock data generation system that allows you to q
 - 📚 **Learning**: Understand the system with sample data
 - 🚀 **Quick Setup**: Get started immediately after installation
 
+### **Categories & Products Created:**
+
+**🏷️ 8 Product Categories:**
+- **Electronics**: Latest gadgets and devices
+- **Clothing**: Fashion and apparel items
+- **Books**: Various genres and subjects
+- **Home & Garden**: Household and garden items
+- **Sports**: Athletic equipment and gear
+- **Toys & Games**: Entertainment for all ages
+- **Automotive**: Car accessories and parts
+- **Health & Beauty**: Wellness and beauty products
+
+**📦 30 Sample Products Include:**
+- **Electronics**: Smartphone X ($699.99), Laptop Pro ($1299.99), Wireless Headphones ($199.99), Smart Watch ($299.99)
+- **Clothing**: Classic T-Shirt ($24.99), Denim Jeans ($79.99), Winter Jacket ($149.99), Running Shoes ($89.99)
+- **Books**: The Great Adventure ($19.99), Programming Guide ($49.99), Cookbook Deluxe ($34.99), History of Science ($29.99)
+- **Home & Garden**: Garden Tool Set ($89.99), Kitchen Mixer ($199.99), LED Desk Lamp ($59.99), Plant Pot Set ($39.99)
+- **Sports**: Basketball ($29.99), Yoga Mat ($44.99), Tennis Racket ($129.99), Fitness Tracker ($89.99)
+- **Toys & Games**: Board Game Set ($39.99), Remote Control Car ($79.99), Puzzle Collection ($24.99)
+- **Automotive**: Car Phone Mount ($19.99), LED Light Strip ($34.99)
+- **Health & Beauty**: Skincare Set ($89.99), Hair Dryer Pro ($129.99)
+
+**👥 5 Test Users Created:**
+- **Admin User**: `admin/admin123` (superuser with full access)
+- **Regular Users**: `john_doe/password123`, `jane_smith/password123`, `bob_wilson/password123`, `alice_brown/password123`
+- **Complete Profiles**: Phone numbers, addresses, cities, states, zip codes
+
+### **After Creating Mock Data:**
+- 🧪 **Test API Endpoints**: All endpoints now have real data to work with
+- 📊 **Explore CRUD Dashboard**: View and manage products, categories, and users
+- 🔐 **Test Authentication**: Login with any of the created user accounts
+- 📱 **Admin Interface**: Access `/admin/` with admin/admin123 credentials
+- 🚀 **Immediate Development**: Start building and testing features right away
+
 ## Mock Users Feature
 
 The project also includes a dedicated mock users generation system that creates comprehensive user accounts for testing authentication, permissions, and user management features.
