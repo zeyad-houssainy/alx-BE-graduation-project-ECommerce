@@ -16,6 +16,16 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 - **Mock Data Generation**: One-click sample data creation for testing and debugging
 - **Mock Users Generation**: Comprehensive user account creation for authentication and permission testing
 
+## Project Preview
+
+### Main Website Home Page
+![Home Page](https://i.imgur.com/example1.png)
+*Clean and modern home page with action buttons for mock data generation*
+
+### Admin Dashboard Home
+![E-Commerce Dashboard](https://i.imgur.com/example10.png)
+*Dark-themed admin dashboard with comprehensive management sections*
+
 ## Tech Stack
 
 - **Backend**: Django 5.2.4
@@ -269,6 +279,55 @@ python manage.py createsuperuser
 python manage.py collectstatic
 python manage.py runserver
 ```
+
+## Project Screenshots
+
+### Navigation & Interface
+![API Endpoints Documentation](https://i.imgur.com/example2.png)
+*Comprehensive API endpoints documentation with clear categorization*
+
+![User Authentication](https://i.imgur.com/example3.png)
+*Secure login interface with JWT authentication*
+
+![API Endpoints Overview](https://i.imgur.com/example4.png)
+*Detailed API endpoints with authentication requirements and functionality*
+
+![CRUD Dashboard](https://i.imgur.com/example5.png)
+*Powerful dashboard for managing products, categories, and users*
+
+![Category Management](https://i.imgur.com/example6.png)
+*Advanced category management interface with search and filtering capabilities*
+
+### API Documentation & Interface
+![API Documentation Overview](https://i.imgur.com/example7.png)
+*Comprehensive API documentation with quick navigation and detailed examples*
+
+![Users API Endpoints](https://i.imgur.com/example8.png)
+*Detailed user management API endpoints with request/response examples*
+
+![User Profile API Response](https://i.imgur.com/example9.png)
+*Django REST Framework browsable API showing user profile data*
+
+### Admin Dashboard
+![E-Commerce Dashboard](https://i.imgur.com/example10.png)
+*Dark-themed admin dashboard with comprehensive management sections*
+
+![User Profiles Management](https://i.imgur.com/example11.png)
+*User profiles management interface with filtering and search capabilities*
+
+![Products Management](https://i.imgur.com/example12.png)
+*Complete product management system with categories, pricing, and stock tracking*
+
+## Visual Features
+
+The project includes a comprehensive and visually appealing interface:
+
+- **Modern Design**: Clean, dark-themed interface with blue accents
+- **Responsive Layout**: Well-organized navigation and content areas
+- **Interactive Elements**: Search, filtering, and bulk action capabilities
+- **Professional Appearance**: Dashboard-style interface for easy management
+- **User-Friendly**: Intuitive navigation and clear visual hierarchy
+- **Comprehensive Views**: Detailed management for all aspects of the e-commerce system
 
 
 
