@@ -17,6 +17,12 @@ class EcommerceAdminSite(AdminSite):
     site_title = "E-Commerce Admin"
     index_title = "Welcome to E-Commerce Management"
     site_url = "/api/"
+    
+    # Ensure proper admin styling
+    def each_context(self, request):
+        context = super().each_context(request)
+        # Add any additional context if needed
+        return context
 
     def get_urls(self):
         urls = super().get_urls()
