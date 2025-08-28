@@ -66,6 +66,10 @@ urlpatterns = [
     
     # Documentation
     path('docs/', views.documentation, name='documentation'),
+    
+    # Mock data creation
+    path('create-mock-data/', views.create_mock_data, name='create-mock-data'),
+    path('create-mock-users/', views.create_mock_users, name='create-mock-users'),
 ]
 
 # Serve media files during development

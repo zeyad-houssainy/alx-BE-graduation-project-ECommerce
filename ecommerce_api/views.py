@@ -12,6 +12,9 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from accounts.serializers import UserCreateSerializer
 from django.utils import timezone
+from django.core.management import call_command
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 def home(request):
@@ -132,3 +135,33 @@ def healthcheck(request):
         'message': 'Django E-commerce API is running',
         'timestamp': timezone.now().isoformat()
     })
+
+
+def create_mock_data(request):
+    """Create mock data for debugging purposes"""
+    if request.method == 'POST':
+        try:
+            # Call the management command
+            call_command('create_mock_data')
+            messages.success(request, 'Mock data created successfully! You can now test the API with sample data.')
+            return JsonResponse({'status': 'success', 'message': 'Mock data created successfully!'})
+        except Exception as e:
+            messages.error(request, f'Error creating mock data: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return redirect('home')
+
+
+def create_mock_users(request):
+    """Create mock users for debugging purposes"""
+    if request.method == 'POST':
+        try:
+            # Call the management command
+            call_command('create_mock_users')
+            messages.success(request, 'Mock users created successfully! You can now test user management features.')
+            return JsonResponse({'status': 'success', 'message': 'Mock users created successfully!'})
+        except Exception as e:
+            messages.error(request, f'Error creating mock users: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return redirect('home')
