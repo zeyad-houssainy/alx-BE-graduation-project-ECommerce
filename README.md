@@ -12,7 +12,7 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 - **RESTful API**: Full REST API with filtering, searching, and pagination
 - **Admin Interface**: Django admin for content management
 - **CORS Support**: Cross-origin resource sharing enabled
-- **Static File Handling**: Optimized static file serving with WhiteNoise
+- **Static File Handling**: Optimized static file serving for production
 - **Mock Data Generation**: One-click sample data creation for testing and debugging
 - **Mock Users Generation**: Comprehensive user account creation for authentication and permission testing
 
@@ -32,7 +32,7 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 - **API**: Django REST Framework
 - **Authentication**: JWT (JSON Web Tokens)
 - **Database**: MySQL
-- **Static Files**: WhiteNoise
+- **Static Files**: Django built-in static file handling
 - **Server**: Development server
 
 ## Prerequisites
@@ -252,6 +252,28 @@ For detailed help, check the error messages in your terminal.
 ## API Endpoints
 
 The project includes comprehensive REST API endpoints for authentication, users, categories, products, and reviews. All endpoints are documented in the code and accessible through the web interface.
+
+## 🚀 Deployment
+
+### PythonAnywhere Deployment
+
+This project is configured for easy deployment on PythonAnywhere. Follow the comprehensive deployment guide:
+
+**📖 Full Deployment Guide**: [DEPLOY_PYTHONANYWHERE.md](DEPLOY_PYTHONANYWHERE.md)
+
+**⚡ Quick Deployment Steps**:
+1. Clone repository on PythonAnywhere
+2. Create MySQL database
+3. Configure environment variables
+4. Install dependencies and run migrations
+5. Configure web app and WSGI file
+6. Reload and test
+
+**🔧 Deployment Files**:
+- `pythonanywhere_wsgi.py` - WSGI configuration
+- `pythonanywhere.env.example` - Environment variables template
+- `pythonanywhere_deploy.py` - Automated setup script
+- `PYTHONANYWHERE_CHECKLIST.md` - Deployment checklist
 
 ## Contributing
 

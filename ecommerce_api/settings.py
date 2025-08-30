@@ -32,14 +32,14 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
-# Railway-specific settings
-RAILWAY_ENVIRONMENT = config('RAILWAY_ENVIRONMENT', default=False, cast=bool)
+# PythonAnywhere-specific settings
+PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
 
-if RAILWAY_ENVIRONMENT:
-    # Production settings for Railway
+if PYTHONANYWHERE_ENVIRONMENT:
+    # Production settings for PythonAnywhere
     DEBUG = False
-    ALLOWED_HOSTS = ['*']  # Allow all hosts on Railway
-    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
     
     # Security settings for production
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
@@ -49,8 +49,8 @@ if RAILWAY_ENVIRONMENT:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
     
-    # Static files for Railway
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Static files for PythonAnywhere
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 # Application definition
@@ -78,7 +78,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -170,9 +169,10 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# WhiteNoise Configuration for static files
-if RAILWAY_ENVIRONMENT:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static files configuration
+if PYTHONANYWHERE_ENVIRONMENT:
+    # Production settings for PythonAnywhere
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 else:
     # For local development, use default storage but ensure static files work
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
@@ -255,8 +255,8 @@ CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS',
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Logging Configuration for Railway
-if RAILWAY_ENVIRONMENT:
+# Logging Configuration for PythonAnywhere
+if PYTHONANYWHERE_ENVIRONMENT:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -264,14 +264,25 @@ if RAILWAY_ENVIRONMENT:
             'console': {
                 'class': 'logging.StreamHandler',
             },
+            'file': {
+                'class': 'logging.FileHandler',
+                'filename': '/tmp/django.log',
+                'formatter': 'verbose',
+            },
+        },
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+                'style': '{',
+            },
         },
         'root': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': config('LOG_LEVEL', default='INFO'),
         },
         'loggers': {
             'django': {
-                'handlers': ['console'],
+                'handlers': ['console', 'file'],
                 'level': config('LOG_LEVEL', default='INFO'),
                 'propagate': False,
             },

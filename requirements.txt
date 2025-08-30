@@ -1,3 +1,6 @@
+# PythonAnywhere-optimized requirements
+# This project is configured specifically for PythonAnywhere deployment
+
 Django==5.2.4
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.0
@@ -6,6 +9,6 @@ django-cors-headers==4.5.0
 Pillow==10.4.0
 python-decouple==3.8
 PyMySQL==1.1.0
-whitenoise==6.8.1
-gunicorn==23.0.0
-mysql-connector-python==8.2.0
+
+# Note: WhiteNoise and Gunicorn are not needed on PythonAnywhere
+# PythonAnywhere handles static files and WSGI serving automatically
