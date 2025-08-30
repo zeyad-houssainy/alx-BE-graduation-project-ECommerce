@@ -110,21 +110,31 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# MySQL Database Configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
-        'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
-        'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
-        'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='Houssainy1995!')),
-        'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+# Database Configuration
+if PYTHONANYWHERE_ENVIRONMENT:
+    # MySQL Database Configuration for PythonAnywhere
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
+            'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
+            'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
+            'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='Houssainy1995!')),
+            'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
+else:
+    # SQLite Database Configuration for Local Development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

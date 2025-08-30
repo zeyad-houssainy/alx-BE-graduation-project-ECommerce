@@ -47,8 +47,6 @@ urlpatterns = [
     path('crud/categories/', crud_views.crud_categories, name='crud-categories'),
     path('crud/users/', crud_views.crud_users, name='crud-users'),
     
-
-    
     # API root endpoint - shows all available endpoints
     path('api/', views.api_root, name='api-root'),
     
@@ -56,8 +54,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    
-    # User Authentication endpoints (handled by accounts.urls)
     
     # API endpoints
     path('api/', include('accounts.urls')),
@@ -78,5 +74,5 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 else:
     # In production, PythonAnywhere handles static files automatically
-# Media files should be served through a CDN or separate service
-pass
+    # Media files should be served through a CDN or separate service
+    pass
