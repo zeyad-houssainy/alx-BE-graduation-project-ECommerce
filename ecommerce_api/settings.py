@@ -30,7 +30,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-s8md8r=z3^2w8aud0buw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
 
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
@@ -38,7 +38,7 @@ PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False,
 if PYTHONANYWHERE_ENVIRONMENT:
     # Production settings for PythonAnywhere
     DEBUG = False
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
     CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
     
     # Security settings for production
