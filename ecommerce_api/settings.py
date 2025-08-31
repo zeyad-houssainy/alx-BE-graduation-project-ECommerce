@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
-import pymysql
 import os
-
-pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -128,11 +125,15 @@ if PYTHONANYWHERE_ENVIRONMENT:
         }
     }
 else:
-    # SQLite Database Configuration for Local Development
+    # MySQL Database Configuration for Local Development
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ecommerce_db',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': 'zeyad203',
+            'PORT': 3306,
         }
     }
 
