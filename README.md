@@ -262,25 +262,29 @@ source venv/bin/activate  # macOS/Linux
 
 ## 📸 Project Screenshots
 
+### Home Page
+![Home Page](images/homepage.jpg)
+*Modern and responsive home page with gradient background, action buttons for mock data generation, and comprehensive feature overview*
+
 ### Home Page Overview
 ![Home Page Overview](images/home%20page%20overview.jpg)
-*Comprehensive home page showcasing the main features, navigation, and action buttons for the e-commerce platform*
+*Complete home page view showcasing navigation, hero section, feature cards, and action buttons for the e-commerce platform*
 
 ### CRUD Dashboard
 ![CRUD Dashboard](images/CRUD%20dashboard.jpg)
-*Main dashboard interface with statistics cards, quick actions, and overview of products, categories, and users*
+*Main dashboard interface with real-time statistics cards, quick actions, and comprehensive overview of products, categories, and users*
 
-### API Endpoints Overview
+### API Endpoints
 ![API Endpoints](images/API%20endpoints.jpg)
-*Complete overview of available API endpoints organized by functionality with clear HTTP methods and descriptions*
+*Structured overview of API endpoints and technology stack with clear categorization and technical details*
 
 ### API Interface
 ![API Interface](images/API.jpg)
-*Interactive API interface showing endpoint categories, authentication requirements, and quick access to documentation*
+*Interactive API dashboard showing endpoint categories, authentication requirements, and quick access to documentation*
 
 ### Category Management
 ![Category Management](images/Category%20management.jpg)
-*Advanced category management interface with search, filtering, and CRUD operations for organizing products*
+*Advanced category management interface with search, filtering, and full CRUD operations for organizing products*
 
 ### Admin Panel
 ![Admin Panel](images/admin%20panel.jpg)
@@ -288,7 +292,7 @@ source venv/bin/activate  # macOS/Linux
 
 ### Admin Products Management
 ![Admin Products Management](images/admin%20page%20products.jpg)
-*Comprehensive product management in Django admin with filtering, search, and bulk operations*
+*Comprehensive product management in Django admin with advanced filtering, search capabilities, and bulk operations*
 
 ### API Documentation
 ![API Documentation](images/documentation.jpg)
