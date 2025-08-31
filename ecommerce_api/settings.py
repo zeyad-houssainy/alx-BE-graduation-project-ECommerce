@@ -116,7 +116,7 @@ if PYTHONANYWHERE_ENVIRONMENT:
             'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
             'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
             'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
-            'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='Houssainy1995!')),
+            'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='zeyad203')),
             'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
             'OPTIONS': {
                 'charset': 'utf8mb4',
