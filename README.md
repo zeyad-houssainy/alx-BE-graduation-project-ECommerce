@@ -4,7 +4,8 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 
 ## 📸 Home Page Screenshot
 
-*[Screenshot will be added here]*
+![Home Page](images/homepage.jpg)
+*Modern and responsive home page with gradient background, action buttons for mock data generation, and comprehensive feature overview*
 
 ---
 
@@ -261,53 +262,37 @@ source venv/bin/activate  # macOS/Linux
 
 ## 📸 Project Screenshots
 
-### Main Interface
-![Home Page](https://i.imgur.com/example1.png)
-*Clean and modern home page with action buttons for mock data generation*
-
-### API Documentation
-![API Endpoints Documentation](https://i.imgur.com/example2.png)
-*Comprehensive API endpoints documentation with clear categorization*
-
-### User Authentication
-![User Authentication](https://i.imgur.com/example3.png)
-*Secure login interface with JWT authentication*
-
-### API Overview
-![API Endpoints Overview](https://i.imgur.com/example4.png)
-*Detailed API endpoints with authentication requirements and functionality*
+### Home Page Overview
+![Home Page Overview](images/home%20page%20overview.jpg)
+*Comprehensive home page showcasing the main features, navigation, and action buttons for the e-commerce platform*
 
 ### CRUD Dashboard
-![CRUD Dashboard](https://i.imgur.com/example5.png)
-*Powerful dashboard for managing products, categories, and users*
+![CRUD Dashboard](images/CRUD%20dashboard.jpg)
+*Main dashboard interface with statistics cards, quick actions, and overview of products, categories, and users*
+
+### API Endpoints Overview
+![API Endpoints](images/API%20endpoints.jpg)
+*Complete overview of available API endpoints organized by functionality with clear HTTP methods and descriptions*
+
+### API Interface
+![API Interface](images/API.jpg)
+*Interactive API interface showing endpoint categories, authentication requirements, and quick access to documentation*
 
 ### Category Management
-![Category Management](https://i.imgur.com/example6.png)
-*Advanced category management interface with search and filtering capabilities*
+![Category Management](images/Category%20management.jpg)
+*Advanced category management interface with search, filtering, and CRUD operations for organizing products*
 
-### API Documentation Interface
-![API Documentation Overview](https://i.imgur.com/example7.png)
-*Comprehensive API documentation with quick navigation and detailed examples*
+### Admin Panel
+![Admin Panel](images/admin%20panel.jpg)
+*Django admin interface with dark theme for managing user accounts, authentication, categories, and products*
 
-### Users API
-![Users API Endpoints](https://i.imgur.com/example8.png)
-*Detailed user management API endpoints with request/response examples*
+### Admin Products Management
+![Admin Products Management](images/admin%20page%20products.jpg)
+*Comprehensive product management in Django admin with filtering, search, and bulk operations*
 
-### User Profile Response
-![User Profile API Response](https://i.imgur.com/example9.png)
-*Django REST Framework browsable API showing user profile data*
-
-### Admin Dashboard
-![E-Commerce Dashboard](https://i.imgur.com/example10.png)
-*Dark-themed admin dashboard with comprehensive management sections*
-
-### User Profiles Management
-![User Profiles Management](https://i.imgur.com/example11.png)
-*User profiles management interface with filtering and search capabilities*
-
-### Products Management
-![Products Management](https://i.imgur.com/example12.png)
-*Complete product management system with categories, pricing, and stock tracking*
+### API Documentation
+![API Documentation](images/documentation.jpg)
+*Detailed API documentation with authentication examples, request/response formats, and comprehensive endpoint guides*
 
 ---
 
