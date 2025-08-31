@@ -66,6 +66,7 @@ urlpatterns = [
     # Mock data creation
     path('create-mock-data/', views.create_mock_data, name='create-mock-data'),
     path('create-mock-users/', views.create_mock_users, name='create-mock-users'),
+    path('setup-database-mock/', views.setup_database_mock, name='setup-database-mock'),
 ]
 
 # Serve media files during development

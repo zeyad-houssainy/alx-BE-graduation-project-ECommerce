@@ -165,3 +165,82 @@ def create_mock_users(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     
     return redirect('home')
+
+
+def setup_database_mock(request):
+    """Complete setup: Create database, run migrations, and create mock data"""
+    if request.method == 'POST':
+        try:
+            import mysql.connector
+            from django.conf import settings
+            from django.core.management import call_command
+            import subprocess
+            import sys
+            
+            response_data = {'status': 'success', 'steps': [], 'message': ''}
+            
+            # Step 1: Check MySQL connection and create database if needed
+            try:
+                # Connect to MySQL as root
+                connection = mysql.connector.connect(
+                    host=settings.DATABASES['default']['HOST'],
+                    user=settings.DATABASES['default']['USER'],
+                    password=settings.DATABASES['default']['PASSWORD'],
+                    port=settings.DATABASES['default']['PORT']
+                )
+                
+                if connection.is_connected():
+                    cursor = connection.cursor()
+                    
+                    # Check if database exists
+                    cursor.execute("SHOW DATABASES LIKE %s", (settings.DATABASES['default']['NAME'],))
+                    db_exists = cursor.fetchone()
+                    
+                    if not db_exists:
+                        # Create database
+                        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {settings.DATABASES['default']['NAME']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+                        response_data['steps'].append('✅ Database created successfully')
+                    else:
+                        response_data['steps'].append('✅ Database already exists')
+                    
+                    cursor.close()
+                    connection.close()
+                    
+            except Exception as e:
+                response_data['status'] = 'error'
+                response_data['message'] = f'Database setup failed: {str(e)}'
+                return JsonResponse(response_data)
+            
+            # Step 2: Run migrations
+            try:
+                call_command('migrate', verbosity=0)
+                response_data['steps'].append('✅ Database migrations applied')
+            except Exception as e:
+                response_data['status'] = 'error'
+                response_data['message'] = f'Migration failed: {str(e)}'
+                return JsonResponse(response_data)
+            
+            # Step 3: Create mock data
+            try:
+                call_command('create_mock_data', verbosity=0)
+                response_data['steps'].append('✅ Mock data created')
+            except Exception as e:
+                response_data['steps'].append(f'⚠️ Mock data creation failed: {str(e)}')
+            
+            # Step 4: Create mock users
+            try:
+                call_command('create_mock_users', verbosity=0)
+                response_data['steps'].append('✅ Mock users created')
+            except Exception as e:
+                response_data['steps'].append(f'⚠️ Mock users creation failed: {str(e)}')
+            
+            response_data['message'] = 'Database setup completed successfully!'
+            return JsonResponse(response_data)
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error', 
+                'message': f'Setup failed: {str(e)}'
+            })
+    
+    return redirect('home')

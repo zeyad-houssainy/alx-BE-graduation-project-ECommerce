@@ -37,17 +37,36 @@
             </div>
             {% endif %}
             
-            <!-- Mock Data Buttons -->
+            <!-- Database Setup and Mock Data Buttons -->
             <div class="row justify-content-center mt-4">
                 <div class="col-md-4 mb-3">
                     {% csrf_token %}
-                    <button id="createMockDataBtn" class="btn btn-warning btn-lg w-100">
+                    <button id="setupDatabaseBtn" class="btn btn-success btn-lg w-100" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="This button will generate a full MySQL database and populate it with mock datasets for testing and development">
+                        <i class="fas fa-rocket me-2"></i>Create DB + MockSet
+                        <i class="fas fa-info-circle ms-2" style="font-size: 0.8em; opacity: 0.8;"></i>
+                    </button>
+                    <small class="text-muted d-block mt-1">
+                        <i class="fas fa-lightbulb me-1"></i>Hover for details
+                    </small>
+                    <div id="setupStatus" class="mt-3" style="display: none;"></div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="createMockDataBtn" class="btn btn-warning btn-lg w-100"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Create sample products, categories, and other mock data for testing">
                         <i class="fas fa-database me-2"></i>Create Mock Data
                     </button>
                     <div id="mockDataStatus" class="mt-3" style="display: none;"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <button id="createMockUsersBtn" class="btn btn-info btn-lg w-100">
+                    <button id="createMockUsersBtn" class="btn btn-info btn-lg w-100"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Create sample user accounts and profiles for testing user management features">
                         <i class="fas fa-users me-2"></i>Create Mock Users
                     </button>
                     <div id="mockUsersStatus" class="mt-3" style="display: none;"></div>
@@ -331,16 +350,17 @@
                         <h5 class="card-title">Quick Setup</h5>
                         <ol class="list-group list-group-numbered">
                             <li class="list-group-item">Install MySQL 8.0+ server</li>
-                            <li class="list-group-item">Create database: <code>CREATE DATABASE ecommerce_db;</code></li>
-                            <li class="list-group-item">Copy <code>env.example</code> to <code>.env</code></li>
+                            <li class="list-group-item">Configure database settings in <code>ecommerce_api/settings.py</code></li>
                             <li class="list-group-item">Install dependencies: <code>pip install -r requirements.txt</code></li>
-                            <li class="list-group-item">Run migrations: <code>python manage.py migrate</code></li>
+                            <li class="list-group-item"><strong>🚀 EASY WAY:</strong> Click "Create DB + MockSet" button above for automated setup!</li>
+                            <li class="list-group-item"><strong>MANUAL WAY:</strong> Create database: <code>CREATE DATABASE ecommerce_db;</code></li>
+                            <li class="list-group-item"><strong>MANUAL WAY:</strong> Run migrations: <code>python manage.py migrate</code></li>
                             <li class="list-group-item">Create superuser: <code>python manage.py createsuperuser</code></li>
                             <li class="list-group-item">Collect static files: <code>python manage.py collectstatic</code></li>
                             <li class="list-group-item">Start server: <code>python manage.py runserver</code></li>
                         </ol>
                         <div class="alert alert-info mt-3">
-                            <strong>💡 Pro Tip:</strong> After setup, use the "Create Mock Data" and "Create Mock Users" buttons above to populate your database with sample data for testing!
+                            <strong>💡 Pro Tip:</strong> For a complete automated setup, use the "Create DB + MockSet" button above! It will create the database, run migrations, and populate it with sample data automatically. Or use the individual "Create Mock Data" and "Create Mock Users" buttons for manual control.
                         </div>
                         <div class="text-center mt-3">
                             <a href="https://github.com/zeyad-houssainy/alx-BE-graduation-project-ECommerce" class="btn btn-primary">
@@ -357,10 +377,65 @@
 <!-- Mock Data JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    const setupDatabaseBtn = document.getElementById('setupDatabaseBtn');
+    const setupStatus = document.getElementById('setupStatus');
     const createMockDataBtn = document.getElementById('createMockDataBtn');
     const mockDataStatus = document.getElementById('mockDataStatus');
     const createMockUsersBtn = document.getElementById('createMockUsersBtn');
     const mockUsersStatus = document.getElementById('mockUsersStatus');
+    
+    // Setup Database Button Handler
+    setupDatabaseBtn.addEventListener('click', function() {
+        // Disable button and show loading state
+        setupDatabaseBtn.disabled = true;
+        setupDatabaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Setting up Database...';
+        
+        // Show status div
+        setupStatus.style.display = 'block';
+        setupStatus.innerHTML = '<div class="alert alert-info"><i class="fas fa-cog fa-spin me-2"></i>Setting up database and creating mock data, please wait...</div>';
+        
+        // Make AJAX request
+        fetch('{% url "setup-database-mock" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let stepsHtml = '';
+                if (data.steps && data.steps.length > 0) {
+                    stepsHtml = '<div class="mt-2"><strong>Steps completed:</strong><ul class="mb-0">';
+                    data.steps.forEach(step => {
+                        stepsHtml += `<li>${step}</li>`;
+                    });
+                    stepsHtml += '</ul></div>';
+                }
+                
+                setupStatus.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>${data.message}${stepsHtml}</div>`;
+                setupDatabaseBtn.innerHTML = '<i class="fas fa-check me-2"></i>Setup Complete!';
+                setupDatabaseBtn.classList.remove('btn-success');
+                setupDatabaseBtn.classList.add('btn-secondary');
+            } else {
+                setupStatus.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${data.message}</div>`;
+                setupDatabaseBtn.disabled = false;
+                setupDatabaseBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Create DB + MockSet';
+            }
+        })
+        .catch(error => {
+            setupStatus.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Error: ${error.message}</div>`;
+            setupDatabaseBtn.disabled = false;
+            setupDatabaseBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Create DB + MockSet';
+        });
+    });
     
     // Mock Data Button Handler
     createMockDataBtn.addEventListener('click', function() {
