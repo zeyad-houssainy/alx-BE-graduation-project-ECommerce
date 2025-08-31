@@ -4,7 +4,7 @@ A comprehensive Django REST API for an e-commerce platform with user authenticat
 
 ## 📸 Home Page Screenshot
 
-![Home Page](images/homepage.jpg)
+![Home Page](public/screenshots/homepage.jpg)
 *Modern and responsive home page with gradient background, action buttons for mock data generation, and comprehensive feature overview*
 
 ---
@@ -263,39 +263,39 @@ source venv/bin/activate  # macOS/Linux
 ## 📸 Project Screenshots
 
 ### Home Page
-![Home Page](images/homepage.jpg)
+![Home Page](public/screenshots/homepage.jpg)
 *Modern and responsive home page with gradient background, action buttons for mock data generation, and comprehensive feature overview*
 
 ### Home Page Overview
-![Home Page Overview](images/home%20page%20overview.jpg)
+![Home Page Overview](public/screenshots/home%20page%20overview.jpg)
 *Complete home page view showcasing navigation, hero section, feature cards, and action buttons for the e-commerce platform*
 
 ### CRUD Dashboard
-![CRUD Dashboard](images/CRUD%20dashboard.jpg)
+![CRUD Dashboard](public/screenshots/CRUD%20dashboard.jpg)
 *Main dashboard interface with real-time statistics cards, quick actions, and comprehensive overview of products, categories, and users*
 
 ### API Endpoints
-![API Endpoints](images/API%20endpoints.jpg)
+![API Endpoints](public/screenshots/API%20endpoints.jpg)
 *Structured overview of API endpoints and technology stack with clear categorization and technical details*
 
 ### API Interface
-![API Interface](images/API.jpg)
+![API Interface](public/screenshots/API.jpg)
 *Interactive API dashboard showing endpoint categories, authentication requirements, and quick access to documentation*
 
 ### Category Management
-![Category Management](images/Category%20management.jpg)
+![Category Management](public/screenshots/Category%20management.jpg)
 *Advanced category management interface with search, filtering, and full CRUD operations for organizing products*
 
 ### Admin Panel
-![Admin Panel](images/admin%20panel.jpg)
+![Admin Panel](public/screenshots/admin%20panel.jpg)
 *Django admin interface with dark theme for managing user accounts, authentication, categories, and products*
 
 ### Admin Products Management
-![Admin Products Management](images/admin%20page%20products.jpg)
+![Admin Products Management](public/screenshots/admin%20page%20products.jpg)
 *Comprehensive product management in Django admin with advanced filtering, search capabilities, and bulk operations*
 
 ### API Documentation
-![API Documentation](images/documentation.jpg)
+![API Documentation](public/screenshots/documentation.jpg)
 *Detailed API documentation with authentication examples, request/response formats, and comprehensive endpoint guides*
 
 ---
