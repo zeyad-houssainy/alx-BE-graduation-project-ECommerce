@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-s8md8r=z3^2w8aud0buw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
+ALLOWED_HOSTS = ['*']
 
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
@@ -108,34 +108,16 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database Configuration
-if PYTHONANYWHERE_ENVIRONMENT:
-    # MySQL Database Configuration for PythonAnywhere
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
-            'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
-            'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
-            'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='zeyad203')),
-            'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecommerce_db',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'zeyad203',
+        'PORT': 3306,
     }
-else:
-    # MySQL Database Configuration for Local Development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'ecommerce_db',
-            'HOST': 'localhost',
-            'USER': 'root',
-            'PASSWORD': 'zeyad203',
-            'PORT': 3306,
-        }
-    }
+}
 
 
 # Password validation
