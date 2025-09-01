@@ -32,22 +32,22 @@ ALLOWED_HOSTS = ['*']
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
 
-if PYTHONANYWHERE_ENVIRONMENT:
-    # Production settings for PythonAnywhere
-    DEBUG = False
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
-    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
+# if PYTHONANYWHERE_ENVIRONMENT:
+#     # Production settings for PythonAnywhere
+#     DEBUG = False
+#     ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
+#     CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
     
-    # Security settings for production
-    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
-    SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
-    CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
+#     # Security settings for production
+#     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+#     SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
+#     CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
+#     SECURE_BROWSER_XSS_FILTER = True
+#     SECURE_CONTENT_TYPE_NOSNIFF = True
+#     X_FRAME_OPTIONS = 'DENY'
     
-    # Static files for PythonAnywhere
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+#     # Static files for PythonAnywhere
+#     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 # Application definition
@@ -118,6 +118,18 @@ DATABASES = {
         'PORT': 3306,
     }
 }
+
+# DB Config for PythonAnywhere
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'zeyadhoussainy$default',
+#         'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
+#         'USER': 'zeyadhoussainy',
+#         'PASSWORD': 'alx123456',
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation
