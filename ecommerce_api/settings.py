@@ -32,23 +32,6 @@ ALLOWED_HOSTS = ['*']
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
 
-# if PYTHONANYWHERE_ENVIRONMENT:
-#     # Production settings for PythonAnywhere
-#     DEBUG = False
-#     ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
-#     CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
-    
-#     # Security settings for production
-#     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
-#     SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
-#     CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
-#     SECURE_BROWSER_XSS_FILTER = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-#     X_FRAME_OPTIONS = 'DENY'
-    
-#     # Static files for PythonAnywhere
-#     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
 
 # Application definition
 
@@ -107,29 +90,36 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database Configuration for local device
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ecommerce_db',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': 'zeyad203',
-#         'PORT': 3306,
-#     }
-# }
+# Database Configuration
+# Auto-detect PythonAnywhere environment
+import socket
+hostname = socket.gethostname()
+is_pythonanywhere = 'pythonanywhere.com' in hostname or 'liveconsole' in hostname
 
-# DB Config for PythonAnywhere
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zeyadhoussainy$default',
-        'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
-        'USER': 'zeyadhoussainy',
-        'PASSWORD': 'alx123456',
-        'PORT': 3306,
+if is_pythonanywhere or PYTHONANYWHERE_ENVIRONMENT:
+    # Production settings for PythonAnywhere
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'zeyadhoussainy$default',
+            'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
+            'USER': 'zeyadhoussainy',
+            'PASSWORD': 'alx123456',
+            'PORT': 3306,
+        }
     }
-}
+else:
+    # MySQL Database Configuration for Local Development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ecommerce_db',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': 'zeyad203',
+            'PORT': 3306,
+        }
+    }
 
 
 # Password validation
@@ -175,12 +165,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Static files configuration
-if PYTHONANYWHERE_ENVIRONMENT:
-    # Production settings for PythonAnywhere
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    # For local development, use default storage but ensure static files work
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Ensure admin static files are collected
 STATICFILES_FINDERS = [
