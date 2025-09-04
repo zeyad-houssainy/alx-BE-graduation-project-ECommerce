@@ -1,0 +1,517 @@
+{% extends 'base.html' %}
+
+{% block title %}E-Commerce API - Home{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">E-Commerce API</h1>
+            <p class="lead mb-5">A powerful and scalable e-commerce API built with Django REST Framework</p>
+            
+            {% if user.is_authenticated %}
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'crud-dashboard' %}" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-database me-2"></i>CRUD Dashboard
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-profile' %}" class="btn btn-outline-light btn-lg w-100">
+                        <i class="fas fa-user me-2"></i>My Profile
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-login' %}" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{% url 'user-register' %}" class="btn btn-outline-light btn-lg w-100">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Database Setup and Mock Data Buttons -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-4 mb-3">
+                    {% csrf_token %}
+                    <button id="setupDatabaseBtn" class="btn btn-success btn-lg w-100" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="This button will generate a full MySQL database and populate it with mock datasets for testing and development">
+                        <i class="fas fa-rocket me-2"></i>Create DB + MockSet
+                        <i class="fas fa-info-circle ms-2" style="font-size: 0.8em; opacity: 0.8;"></i>
+                    </button>
+                    <small class="text-muted d-block mt-1">
+                        <i class="fas fa-lightbulb me-1"></i>Hover for details
+                    </small>
+                    <div id="setupStatus" class="mt-3" style="display: none;"></div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="createMockDataBtn" class="btn btn-warning btn-lg w-100"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Create sample products, categories, and other mock data for testing">
+                        <i class="fas fa-database me-2"></i>Create Mock Data
+                    </button>
+                    <div id="mockDataStatus" class="mt-3" style="display: none;"></div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button id="createMockUsersBtn" class="btn btn-info btn-lg w-100"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Create sample user accounts and profiles for testing user management features">
+                        <i class="fas fa-users me-2"></i>Create Mock Users
+                    </button>
+                    <div id="mockUsersStatus" class="mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold">Features</h2>
+                <p class="lead text-muted">Everything you need to build a modern e-commerce platform</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Full CRUD Operations</h5>
+                        <p class="card-text">Complete Create, Read, Update, and Delete functionality for all entities with an intuitive web interface.</p>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'crud-dashboard' %}" class="btn btn-primary">Access Dashboard</a>
+                        {% else %}
+                        <a href="{% url 'user-login' %}" class="btn btn-primary">Login to Access</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                                                 <i class="fas fa-code fa-3x text-success mb-3"></i>
+                         <h5 class="card-title">RESTful API</h5>
+                         <p class="card-text">Modern REST API with JWT authentication, comprehensive endpoints, and detailed documentation.</p>
+                         <div class="d-flex gap-2 justify-content-center">
+                             <a href="/api/" class="btn btn-success">Explore API</a>
+                             <a href="{% url 'documentation' %}" class="btn btn-outline-success">View Docs</a>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Secure & Scalable</h5>
+                        <p class="card-text">Built with security best practices, role-based access control, and MySQL database for scalability.</p>
+                        {% if user.is_staff or user.is_superuser %}
+                        <a href="/admin/" class="btn btn-warning">Admin Panel</a>
+                        {% else %}
+                        <span class="text-muted">Admin access required</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    {% if user.is_authenticated %}
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold">Quick Actions</h2>
+                <p class="lead text-muted">Manage your e-commerce data efficiently</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Products</h5>
+                        <p class="card-text">Manage product catalog, inventory, and pricing.</p>
+                        <a href="{% url 'crud-products' %}" class="btn btn-outline-primary">Manage Products</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tags fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Categories</h5>
+                        <p class="card-text">Organize products with category management.</p>
+                        <a href="{% url 'crud-categories' %}" class="btn btn-outline-success">Manage Categories</a>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user.is_staff or user.is_superuser %}
+            <div class="col-md-3">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Users</h5>
+                        <p class="card-text">Manage user accounts and permissions.</p>
+                        <a href="{% url 'crud-users' %}" class="btn btn-outline-info">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cog fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Admin</h5>
+                        <p class="card-text">Advanced administration and system settings.</p>
+                        <a href="/admin/" class="btn btn-outline-warning">Admin Panel</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+<!-- Database Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Database Technology</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-database fa-3x text-primary mb-3"></i>
+                        <h4>MySQL Database</h4>
+                        <p class="lead">Built with MySQL 8.0+ for robust, scalable data storage</p>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <h6>✅ Features:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>UTF8MB4 character support</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Optimized queries</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Transaction support</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional-grade reliability</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>🚀 Benefits:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Production ready</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>High performance</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Easy scaling</li>
+                                    <li><i class="fas fa-rocket text-info me-2"></i>Industry standard</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- API Endpoints Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">API Endpoints</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h4><i class="fas fa-key text-warning me-2"></i>Authentication</h4>
+                <div class="api-endpoint">
+                    <strong>POST /api/token/</strong> - Get JWT access token
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/token/refresh/</strong> - Refresh JWT token
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/auth/register/</strong> - User registration
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/auth/login/</strong> - User login
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4><i class="fas fa-box text-primary me-2"></i>Products</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/products/</strong> - List all products
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/products/{slug}/</strong> - Get product details
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/products/</strong> - Create product (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>PUT /api/products/{slug}/</strong> - Update product (auth required)
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h4><i class="fas fa-tags text-success me-2"></i>Categories</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/categories/</strong> - List all categories
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/categories/{slug}/</strong> - Get category details
+                </div>
+                <div class="api-endpoint">
+                    <strong>POST /api/categories/</strong> - Create category (auth required)
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4><i class="fas fa-users text-info me-2"></i>Users</h4>
+                <div class="api-endpoint">
+                    <strong>GET /api/users/</strong> - List users (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/users/{id}/</strong> - Get user details (auth required)
+                </div>
+                <div class="api-endpoint">
+                    <strong>GET /api/profiles/</strong> - List user profiles (auth required)
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Technology Stack</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fab fa-python fa-3x text-primary mb-3"></i>
+                        <h6>Django 5.2.4</h6>
+                        <small class="text-muted">Web Framework</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-3x text-success mb-3"></i>
+                        <h6>MySQL 8.0+</h6>
+                        <small class="text-muted">Database</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-info mb-3"></i>
+                        <h6>DRF 3.15.2</h6>
+                        <small class="text-muted">API Framework</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card tech-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h6>JWT Auth</h6>
+                        <small class="text-muted">Authentication</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Getting Started Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Getting Started</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Setup</h5>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item">Install MySQL 8.0+ server</li>
+                            <li class="list-group-item">Configure database settings in <code>ecommerce_api/settings.py</code></li>
+                            <li class="list-group-item">Install dependencies: <code>pip install -r requirements.txt</code></li>
+                            <li class="list-group-item"><strong>🚀 EASY WAY:</strong> Click "Create DB + MockSet" button above for automated setup!</li>
+                            <li class="list-group-item"><strong>MANUAL WAY:</strong> Create database: <code>CREATE DATABASE ecommerce_db;</code></li>
+                            <li class="list-group-item"><strong>MANUAL WAY:</strong> Run migrations: <code>python manage.py migrate</code></li>
+                            <li class="list-group-item">Create superuser: <code>python manage.py createsuperuser</code></li>
+                            <li class="list-group-item">Collect static files: <code>python manage.py collectstatic</code></li>
+                            <li class="list-group-item">Start server: <code>python manage.py runserver</code></li>
+                        </ol>
+                        <div class="alert alert-info mt-3">
+                            <strong>💡 Pro Tip:</strong> For a complete automated setup, use the "Create DB + MockSet" button above! It will create the database, run migrations, and populate it with sample data automatically. Or use the individual "Create Mock Data" and "Create Mock Users" buttons for manual control.
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="https://github.com/zeyad-houssainy/alx-BE-graduation-project-ECommerce" class="btn btn-primary">
+                                <i class="fab fa-github me-2"></i>View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mock Data JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    const setupDatabaseBtn = document.getElementById('setupDatabaseBtn');
+    const setupStatus = document.getElementById('setupStatus');
+    const createMockDataBtn = document.getElementById('createMockDataBtn');
+    const mockDataStatus = document.getElementById('mockDataStatus');
+    const createMockUsersBtn = document.getElementById('createMockUsersBtn');
+    const mockUsersStatus = document.getElementById('mockUsersStatus');
+    
+    // Setup Database Button Handler
+    setupDatabaseBtn.addEventListener('click', function() {
+        // Disable button and show loading state
+        setupDatabaseBtn.disabled = true;
+        setupDatabaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Setting up Database...';
+        
+        // Show status div
+        setupStatus.style.display = 'block';
+        setupStatus.innerHTML = '<div class="alert alert-info"><i class="fas fa-cog fa-spin me-2"></i>Setting up database and creating mock data, please wait...</div>';
+        
+        // Make AJAX request
+        fetch('{% url "setup-database-mock" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let stepsHtml = '';
+                if (data.steps && data.steps.length > 0) {
+                    stepsHtml = '<div class="mt-2"><strong>Steps completed:</strong><ul class="mb-0">';
+                    data.steps.forEach(step => {
+                        stepsHtml += `<li>${step}</li>`;
+                    });
+                    stepsHtml += '</ul></div>';
+                }
+                
+                setupStatus.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>${data.message}${stepsHtml}</div>`;
+                setupDatabaseBtn.innerHTML = '<i class="fas fa-check me-2"></i>Setup Complete!';
+                setupDatabaseBtn.classList.remove('btn-success');
+                setupDatabaseBtn.classList.add('btn-secondary');
+            } else {
+                setupStatus.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${data.message}</div>`;
+                setupDatabaseBtn.disabled = false;
+                setupDatabaseBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Create DB + MockSet';
+            }
+        })
+        .catch(error => {
+            setupStatus.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Error: ${error.message}</div>`;
+            setupDatabaseBtn.disabled = false;
+            setupDatabaseBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Create DB + MockSet';
+        });
+    });
+    
+    // Mock Data Button Handler
+    createMockDataBtn.addEventListener('click', function() {
+        // Disable button and show loading state
+        createMockDataBtn.disabled = true;
+        createMockDataBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Mock Data...';
+        
+        // Show status div
+        mockDataStatus.style.display = 'block';
+        mockDataStatus.innerHTML = '<div class="alert alert-info">Creating mock data, please wait...</div>';
+        
+        // Make AJAX request
+        fetch('{% url "create-mock-data" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                mockDataStatus.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>' + data.message + '</div>';
+                createMockDataBtn.innerHTML = '<i class="fas fa-check me-2"></i>Mock Data Created!';
+                createMockDataBtn.classList.remove('btn-warning');
+                createMockDataBtn.classList.add('btn-success');
+            } else {
+                mockDataStatus.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>' + data.message + '</div>';
+                createMockDataBtn.disabled = false;
+                createMockDataBtn.innerHTML = '<i class="fas fa-database me-2"></i>Create Mock Data';
+            }
+        })
+        .catch(error => {
+            mockDataStatus.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Error: ' + error.message + '</div>';
+            createMockDataBtn.disabled = false;
+            createMockDataBtn.innerHTML = '<i class="fas fa-database me-2"></i>Create Mock Data';
+        });
+    });
+    
+    // Mock Users Button Handler
+    createMockUsersBtn.addEventListener('click', function() {
+        // Disable button and show loading state
+        createMockUsersBtn.disabled = true;
+        createMockUsersBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Mock Users...';
+        
+        // Show status div
+        mockUsersStatus.style.display = 'block';
+        mockUsersStatus.innerHTML = '<div class="alert alert-info">Creating mock users, please wait...</div>';
+        
+        // Make AJAX request
+        fetch('{% url "create-mock-users" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                mockUsersStatus.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>' + data.message + '</div>';
+                createMockUsersBtn.innerHTML = '<i class="fas fa-check me-2"></i>Mock Users Created!';
+                createMockUsersBtn.classList.remove('btn-info');
+                createMockUsersBtn.classList.add('btn-success');
+            } else {
+                mockUsersStatus.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>' + data.message + '</div>';
+                createMockUsersBtn.disabled = false;
+                createMockUsersBtn.innerHTML = '<i class="fas fa-users me-2"></i>Create Mock Users';
+            }
+        })
+        .catch(error => {
+            mockUsersStatus.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Error: ' + error.message + '</div>';
+            createMockUsersBtn.disabled = false;
+            createMockUsersBtn.innerHTML = '<i class="fas fa-users me-2"></i>Create Mock Users';
+        });
+    });
+});
+</script>
+{% endblock %}

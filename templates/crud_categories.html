@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories CRUD - E-Commerce API{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-card {
+        transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .action-buttons {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .category-card:hover .action-buttons {
+        opacity: 1;
+    }
+    .search-section {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    .product-count {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+        background-color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 fw-bold text-success">
+                        <i class="fas fa-tags me-3"></i>Categories Management
+                    </h1>
+                    <p class="lead text-muted">Organize your products with category management</p>
+                </div>
+                <div>
+                    <a href="{% url 'crud-dashboard' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                    <a href="{% url 'crud-categories' %}?action=create" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>Add New Category
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="mb-3">
+                    <i class="fas fa-search me-2"></i>Search & Filter Categories
+                </h3>
+                <form method="GET" action="{% url 'crud-categories' %}" class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" name="search" class="form-control" placeholder="Search categories..." 
+                               value="{{ request.GET.search }}">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                            <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-light w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex flex-column">
+                    <h4 class="mb-2">{{ total_categories|default:"0" }}</h4>
+                    <p class="mb-0">Total Categories</p>
+                    <small class="text-light">{{ active_categories|default:"0" }} Active</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Form Section -->
+    {% if action == 'create' or action == 'edit' %}
+    <div class="form-section">
+        <h3 class="mb-4">
+            <i class="fas fa-{% if action == 'create' %}plus-circle text-success{% else %}edit text-primary{% endif %} me-2"></i>
+            {% if action == 'create' %}Create New Category{% else %}Edit Category{% endif %}
+        </h3>
+        
+        <form method="POST" enctype="multipart/form-data" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label for="name" class="form-label">Category Name *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="{{ category.name|default:'' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="is_active" class="form-label">Status</label>
+                <select class="form-select" id="is_active" name="is_active">
+                    <option value="True" {% if category.is_active %}selected{% endif %}>Active</option>
+                    <option value="False" {% if not category.is_active %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4">{{ category.description|default:'' }}</textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="image" class="form-label">Category Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                {% if category.image %}
+                <small class="text-muted">Current: {{ category.image.name }}</small>
+                {% endif %}
+            </div>
+            <div class="col-12">
+                <hr>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-{% if action == 'create' %}success{% else %}primary{% endif %}">
+                        <i class="fas fa-save me-1"></i>
+                        {% if action == 'create' %}Create Category{% else %}Update Category{% endif %}
+                    </button>
+                    <a href="{% url 'crud-categories' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Categories Grid -->
+    {% if action != 'create' and action != 'edit' %}
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card category-card h-100">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" 
+                     style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                     style="height: 200px;">
+                    <i class="fas fa-tag fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h6 class="card-title">{{ category.name }}</h6>
+                    <p class="card-text text-muted small">{{ category.description|truncatewords:15|default:"No description available" }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="product-count">{{ category.products.count }} Products</span>
+                        <span class="badge {% if category.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if category.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+                    
+                    <small class="text-muted">
+                        Created: {{ category.created_at|date:"M d, Y" }}
+                    </small>
+                </div>
+                
+                <div class="card-footer bg-transparent border-0">
+                    <div class="action-buttons d-flex gap-2">
+                        <a href="{% url 'crud-categories' %}?action=edit&id={{ category.id }}" 
+                           class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                        <a href="{% url 'crud-categories' %}?action=delete&id={{ category.id }}" 
+                           class="btn btn-outline-danger btn-sm flex-fill"
+                           onclick="return confirm('Are you sure you want to delete this category? This will affect all associated products.')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Categories Found</h4>
+                <p class="text-muted">Start organizing your products by creating your first category.</p>
+                <a href="{% url 'crud-categories' %}?action=create" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Add Your First Category
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if categories.has_other_pages %}
+    <nav aria-label="Categories pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if categories.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ categories.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in categories.paginator.page_range %}
+                {% if categories.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > categories.number|add:'-3' and num < categories.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if categories.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ categories.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+
+    <!-- Bulk Actions -->
+    {% if categories and action != 'create' and action != 'edit' %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Bulk Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-success w-100" onclick="bulkAction('activate')">
+                                <i class="fas fa-check-circle me-1"></i>Activate Selected
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-warning w-100" onclick="bulkAction('deactivate')">
+                                <i class="fas fa-pause-circle me-1"></i>Deactivate Selected
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-danger w-100" onclick="bulkAction('delete')">
+                                <i class="fas fa-trash me-1"></i>Delete Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Bulk actions functionality
+    function bulkAction(action) {
+        const selectedCategories = document.querySelectorAll('input[name="category_ids"]:checked');
+        if (selectedCategories.length === 0) {
+            alert('Please select categories to perform bulk actions.');
+            return;
+        }
+        
+        if (action === 'delete' && !confirm('Are you sure you want to delete the selected categories? This will affect all associated products.')) {
+            return;
+        }
+        
+        const categoryIds = Array.from(selectedCategories).map(cb => cb.value);
+        
+        // Here you would typically make an AJAX call to your API
+        console.log(`${action} categories:`, categoryIds);
+        alert(`Bulk ${action} action would be performed on ${categoryIds.length} categories.`);
+    }
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.display = 'none';
+        });
+    }, 5000);
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

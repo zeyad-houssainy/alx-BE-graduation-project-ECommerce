@@ -1,0 +1,34 @@
+# PythonAnywhere Environment Variables
+# Production configuration for zeyadhoussainy.pythonanywhere.com
+# Copy this content to a file named .env in your project directory
+
+# Django Settings
+SECRET_KEY=django-insecure-production-key-change-this-immediately
+DEBUG=False
+ALLOWED_HOSTS=*
+PYTHONANYWHERE_ENVIRONMENT=True
+
+# Database Configuration (PythonAnywhere MySQL)
+DB_NAME=zeyadhoussainy$ecommerce_db
+DB_HOST=zeyadhoussainy.mysql.pythonanywhere-services.com
+DB_USER=zeyadhoussainy
+DB_PASSWORD=your-database-password-here
+DB_PORT=3306
+
+# JWT Authentication
+JWT_SECRET_KEY=your-jwt-secret-key-change-this-immediately
+
+# CORS Settings
+CORS_ALLOWED_ORIGINS=https://zeyadhoussainy.pythonanywhere.com
+
+# Security Settings (Production)
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=True
+
+# Static and Media Files
+STATIC_ROOT=/home/zeyadhoussainy/alx-BE-graduation-project-ECommerce/staticfiles
+MEDIA_ROOT=/home/zeyadhoussainy/alx-BE-graduation-project-ECommerce/media
+
+# Logging
+LOG_LEVEL=INFO

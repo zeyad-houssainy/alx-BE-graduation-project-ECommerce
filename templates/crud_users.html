@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+
+{% block title %}Users CRUD - E-Commerce API{% endblock %}
+
+{% block extra_css %}
+<style>
+    .user-card {
+        transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .action-buttons {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .user-card:hover .action-buttons {
+        opacity: 1;
+    }
+    .search-section {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    .user-status {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
+    .status-active { background-color: #28a745; }
+    .status-inactive { background-color: #6c757d; }
+    .status-staff { background-color: #ffc107; }
+    .status-superuser { background-color: #dc3545; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 fw-bold text-info">
+                        <i class="fas fa-users me-3"></i>Users Management
+                    </h1>
+                    <p class="lead text-muted">Manage user accounts and profiles</p>
+                </div>
+                <div>
+                    <a href="{% url 'crud-dashboard' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                    <a href="{% url 'crud-users' %}?action=create" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>Add New User
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="mb-3">
+                    <i class="fas fa-search me-2"></i>Search & Filter Users
+                </h3>
+                <form method="GET" action="{% url 'crud-users' %}" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="search" class="form-control" placeholder="Search users..." 
+                               value="{{ request.GET.search }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                            <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                            <option value="staff" {% if request.GET.status == 'staff' %}selected{% endif %}>Staff</option>
+                            <option value="superuser" {% if request.GET.status == 'superuser' %}selected{% endif %}>Superuser</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="role" class="form-select">
+                            <option value="">All Roles</option>
+                            <option value="user" {% if request.GET.role == 'user' %}selected{% endif %}>Regular User</option>
+                            <option value="staff" {% if request.GET.role == 'staff' %}selected{% endif %}>Staff</option>
+                            <option value="admin" {% if request.GET.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-light w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex flex-column">
+                    <h4 class="mb-2">{{ total_users|default:"0" }}</h4>
+                    <p class="mb-0">Total Users</p>
+                    <small class="text-light">{{ active_users|default:"0" }} Active</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Form Section -->
+    {% if action == 'create' or action == 'edit' %}
+    <div class="form-section">
+        <h3 class="mb-4">
+            <i class="fas fa-{% if action == 'create' %}plus-circle text-success{% else %}edit text-primary{% endif %} me-2"></i>
+            {% if action == 'create' %}Create New User{% else %}Edit User{% endif %}
+        </h3>
+        
+        <form method="POST" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <label for="username" class="form-label">Username *</label>
+                <input type="text" class="form-control" id="username" name="username" 
+                       value="{{ user.username|default:'' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="{{ user.email|default:'' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" 
+                       value="{{ user.first_name|default:'' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" 
+                       value="{{ user.last_name|default:'' }}">
+            </div>
+            {% if action == 'create' %}
+            <div class="col-md-6">
+                <label for="password" class="form-label">Password *</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="col-md-6">
+                <label for="password_confirm" class="form-label">Confirm Password *</label>
+                <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+                <label for="is_active" class="form-label">Status</label>
+                <select class="form-select" id="is_active" name="is_active">
+                    <option value="True" {% if user.is_active %}selected{% endif %}>Active</option>
+                    <option value="False" {% if not user.is_active %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="is_staff" class="form-label">Staff Status</label>
+                <select class="form-select" id="is_staff" name="is_staff">
+                    <option value="False" {% if not user.is_staff %}selected{% endif %}>Regular User</option>
+                    <option value="True" {% if user.is_staff %}selected{% endif %}>Staff</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="is_superuser" class="form-label">Superuser</label>
+                <select class="form-select" id="is_superuser" name="is_superuser">
+                    <option value="False" {% if not user.is_superuser %}selected{% endif %}>No</option>
+                    <option value="True" {% if user.is_superuser %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+            
+            <!-- Profile Information -->
+            <div class="col-12">
+                <hr>
+                <h5 class="mb-3">Profile Information</h5>
+            </div>
+            <div class="col-md-6">
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                       value="{{ user.profile.phone_number|default:'' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" 
+                       value="{{ user.profile.date_of_birth|date:'Y-m-d'|default:'' }}">
+            </div>
+            <div class="col-12">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="3">{{ user.profile.address|default:'' }}</textarea>
+            </div>
+            
+            <div class="col-12">
+                <hr>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-{% if action == 'create' %}success{% else %}primary{% endif %}">
+                        <i class="fas fa-save me-1"></i>
+                        {% if action == 'create' %}Create User{% else %}Update User{% endif %}
+                    </button>
+                    <a href="{% url 'crud-users' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Users Grid -->
+    {% if action != 'create' and action != 'edit' %}
+    <div class="row">
+        {% for user in users %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card user-card h-100">
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                     style="height: 200px;">
+                    {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <i class="fas fa-user fa-3x text-muted"></i>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body">
+                    <h6 class="card-title">{{ user.username }}</h6>
+                    <p class="card-text text-muted small">{{ user.email }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small">
+                            {{ user.first_name|default:"" }} {{ user.last_name|default:"" }}
+                        </span>
+                        <span class="user-status 
+                            {% if user.is_superuser %}status-superuser
+                            {% elif user.is_staff %}status-staff
+                            {% elif user.is_active %}status-active
+                            {% else %}status-inactive{% endif %}">
+                            {% if user.is_superuser %}Superuser
+                            {% elif user.is_staff %}Staff
+                            {% elif user.is_active %}Active
+                            {% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+                    
+                    <small class="text-muted">
+                        Joined: {{ user.date_joined|date:"M d, Y" }}
+                        {% if user.profile.phone_number %}<br>Phone: {{ user.profile.phone_number }}{% endif %}
+                    </small>
+                </div>
+                
+                <div class="card-footer bg-transparent border-0">
+                    <div class="action-buttons d-flex gap-2">
+                        <a href="{% url 'crud-users' %}?action=edit&id={{ user.id }}" 
+                           class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                        <a href="{% url 'crud-users' %}?action=delete&id={{ user.id }}" 
+                           class="btn btn-outline-danger btn-sm flex-fill"
+                           onclick="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Users Found</h4>
+                <p class="text-muted">Start building your user base by adding your first user.</p>
+                <a href="{% url 'crud-users' %}?action=create" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Add Your First User
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if users.has_other_pages %}
+    <nav aria-label="Users pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if users.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in users.paginator.page_range %}
+                {% if users.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > users.number|add:'-3' and num < users.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if users.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+
+    <!-- Bulk Actions -->
+    {% if users and action != 'create' and action != 'edit' %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Bulk Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-success w-100" onclick="bulkAction('activate')">
+                                <i class="fas fa-check-circle me-1"></i>Activate Selected
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-warning w-100" onclick="bulkAction('deactivate')">
+                                <i class="fas fa-pause-circle me-1"></i>Deactivate Selected
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info w-100" onclick="bulkAction('make_staff')">
+                                <i class="fas fa-user-tie me-1"></i>Make Staff
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-danger w-100" onclick="bulkAction('delete')">
+                                <i class="fas fa-trash me-1"></i>Delete Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Bulk actions functionality
+    function bulkAction(action) {
+        const selectedUsers = document.querySelectorAll('input[name="user_ids"]:checked');
+        if (selectedUsers.length === 0) {
+            alert('Please select users to perform bulk actions.');
+            return;
+        }
+        
+        if (action === 'delete' && !confirm('Are you sure you want to delete the selected users? This action cannot be undone.')) {
+            return;
+        }
+        
+        const userIds = Array.from(selectedUsers).map(cb => cb.value);
+        
+        // Here you would typically make an AJAX call to your API
+        console.log(`${action} users:`, userIds);
+        alert(`Bulk ${action} action would be performed on ${userIds.length} users.`);
+    }
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.display = 'none';
+        });
+    }, 5000);
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}
