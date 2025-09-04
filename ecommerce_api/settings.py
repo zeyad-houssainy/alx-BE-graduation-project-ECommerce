@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-s8md8r=z3^2w8aud0buw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'zeyadhoussainy.pythonanywhere.com']
 
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
@@ -108,28 +108,28 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database Configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ecommerce_db',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'zeyad203',
-        'PORT': 3306,
-    }
-}
-
-# DB Config for PythonAnywhere
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'zeyadhoussainy$default',
-#         'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
-#         'USER': 'zeyadhoussainy',
-#         'PASSWORD': 'alx123456',
+#         'NAME': 'ecommerce_db',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': 'zeyad203',
 #         'PORT': 3306,
 #     }
 # }
+
+# DB Config for PythonAnywhere
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'zeyadhoussainy$default',
+        'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
+        'USER': 'zeyadhoussainy',
+        'PASSWORD': 'alx123456',
+        'PORT': 3306,
+    }
+}
 
 
 # Password validation
