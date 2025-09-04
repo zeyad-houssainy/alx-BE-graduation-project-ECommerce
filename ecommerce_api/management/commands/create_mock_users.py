@@ -13,15 +13,15 @@ class Command(BaseCommand):
         if not User.objects.filter(username='admin').exists():
             admin_user = User.objects.create_user(
                 username='admin',
-                email='admin@example.com',
-                password='admin123',
+                email='admin@admin.com',
+                password='admin',
                 is_staff=True,
                 is_superuser=True
             )
-            self.stdout.write(self.style.SUCCESS(f'Created superuser: admin/admin123'))
+            self.stdout.write(self.style.SUCCESS(f'Created superuser: admin/admin'))
         else:
             admin_user = User.objects.get(username='admin')
-            self.stdout.write(f'Admin user already exists: admin/admin123')
+            self.stdout.write(f'Admin user already exists: admin/admin')
         
         # Create regular users with more variety
         users_data = [
@@ -84,7 +84,7 @@ class Command(BaseCommand):
         self.stdout.write(f'✅ New profiles created: {profiles_created}')
         
         self.stdout.write(self.style.SUCCESS('\n=== Login Credentials ==='))
-        self.stdout.write('Admin: admin/admin123')
+        self.stdout.write('Admin: admin/admin')
         self.stdout.write('Staff Users: manager_kate/password123, support_alex/password123')
         self.stdout.write('Regular Users: username/password123')
         self.stdout.write('Examples: john_doe/password123, mike_johnson/password123')

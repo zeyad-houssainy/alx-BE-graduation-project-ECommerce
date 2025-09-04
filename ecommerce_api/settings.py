@@ -107,29 +107,29 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database Configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ecommerce_db',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'zeyad203',
-        'PORT': 3306,
-    }
-}
-
-# DB Config for PythonAnywhere
+# Database Configuration for local device
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'zeyadhoussainy$default',
-#         'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
-#         'USER': 'zeyadhoussainy',
-#         'PASSWORD': 'alx123456',
+#         'NAME': 'ecommerce_db',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': 'zeyad203',
 #         'PORT': 3306,
 #     }
 # }
+
+# DB Config for PythonAnywhere
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'zeyadhoussainy$default',
+        'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
+        'USER': 'zeyadhoussainy',
+        'PASSWORD': 'alx123456',
+        'PORT': 3306,
+    }
+}
 
 
 # Password validation
