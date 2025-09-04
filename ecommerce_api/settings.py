@@ -27,27 +27,27 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-s8md8r=z3^2w8aud0buw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*', 'zeyadhoussainy.pythonanywhere.com']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
 
 # PythonAnywhere-specific settings
 PYTHONANYWHERE_ENVIRONMENT = config('PYTHONANYWHERE_ENVIRONMENT', default=False, cast=bool)
 
-# if PYTHONANYWHERE_ENVIRONMENT:
-#     # Production settings for PythonAnywhere
-#     DEBUG = False
-#     ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
-#     CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
+if PYTHONANYWHERE_ENVIRONMENT:
+    # Production settings for PythonAnywhere
+    DEBUG = False
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')] if v != '*' else ['*'])
+    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.pythonanywhere.com', cast=lambda v: [s.strip() for s in v.split(',')])
     
-#     # Security settings for production
-#     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
-#     SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
-#     CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
-#     SECURE_BROWSER_XSS_FILTER = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-#     X_FRAME_OPTIONS = 'DENY'
+    # Security settings for production
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
+    CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
     
-#     # Static files for PythonAnywhere
-#     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    # Static files for PythonAnywhere
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 # Application definition
@@ -108,28 +108,34 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database Configuration
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ecommerce_db',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': 'zeyad203',
-#         'PORT': 3306,
-#     }
-# }
-
-# DB Config for PythonAnywhere
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zeyadhoussainy$default',
-        'HOST': 'zeyadhoussainy.mysql.pythonanywhere-services.com',
-        'USER': 'zeyadhoussainy',
-        'PASSWORD': 'alx123456',
-        'PORT': 3306,
+if PYTHONANYWHERE_ENVIRONMENT:
+    # MySQL Database Configuration for PythonAnywhere
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config('DB_NAME', default=config('MYSQLDATABASE', default='ecommerce_db')),
+            'HOST': config('DB_HOST', default=config('MYSQLHOST', default='localhost')),
+            'USER': config('DB_USER', default=config('MYSQLUSERNAME', default='root')),
+            'PASSWORD': config('DB_PASSWORD', default=config('MYSQLPASSWORD', default='zeyad203')),
+            'PORT': config('DB_PORT', default=config('MYSQLPORT', default=3306, cast=int), cast=int),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
+else:
+    # MySQL Database Configuration for Local Development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ecommerce_db',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': 'zeyad203',
+            'PORT': 3306,
+        }
+    }
 
 
 # Password validation
